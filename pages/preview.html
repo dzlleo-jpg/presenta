@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>幻灯片预览 - Presenta</title>
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/preview.css">
+  <script src="../scripts/data/models.js" defer></script>
+</head>
+<body class="preview-mode">
+  <!-- Main Presentation Area -->
+  <div class="presentation-container" id="presentationContainer">
+    <div class="slide-stage" id="slideStage">
+      <!-- Slides rendered here -->
+    </div>
+  </div>
+
+  <!-- Control Bar -->
+  <div class="control-bar" id="controlBar">
+    <div class="control-bar-inner">
+      <!-- Left: Navigation -->
+      <div class="control-group control-left">
+        <button class="ctrl-btn" id="firstSlideBtn" title="第一页 (Home)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="11 17 6 12 11 7"/>
+            <polyline points="18 17 13 12 18 7"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn" id="prevSlideBtn" title="上一页 (←)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+        <div class="slide-indicator">
+          <span id="currentNum" class="current-num">1</span>
+          <span class="separator">/</span>
+          <span id="totalNum" class="total-num">1</span>
+        </div>
+        <button class="ctrl-btn" id="nextSlideBtn" title="下一页 (→)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn" id="lastSlideBtn" title="最后一页 (End)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="13 17 18 12 13 7"/>
+            <polyline points="6 17 11 12 6 7"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Center: Tools -->
+      <div class="control-group control-center">
+        <button class="ctrl-btn" id="speakerNotesBtn" title="演讲者备注 (S)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn" id="timerBtn" title="计时器 (T)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn" id="thumbnailStripBtn" title="幻灯片导航 (G)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+          </svg>
+        </button>
+        <div class="ctrl-divider"></div>
+        <button class="ctrl-btn" id="laserBtn" title="激光笔 (L)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <circle cx="12" cy="12" r="8" stroke-dasharray="4 4"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Right: Actions -->
+      <div class="control-group control-right">
+        <button class="ctrl-btn fullscreen-btn" id="fullscreenBtn" title="全屏 (F)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="fullscreenIcon">
+            <polyline points="15 3 21 3 21 9"/>
+            <polyline points="9 21 3 21 3 15"/>
+            <line x1="21" y1="3" x2="14" y2="10"/>
+            <line x1="3" y1="21" x2="10" y2="14"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn" id="exitBtn" title="退出 (Esc)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progressBar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <!-- Speaker Notes Panel -->
+  <div class="speaker-panel" id="speakerPanel">
+    <div class="speaker-panel-header">
+      <h3>演讲者备注</h3>
+      <button class="panel-close-btn" id="closeSpeakerPanel">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="speaker-notes" id="speakerNotes">
+      <p class="notes-placeholder">暂无备注</p>
+    </div>
+    <div class="speaker-timer" id="speakerTimer">
+      <span class="timer-display" id="timerDisplay">00:00</span>
+      <div class="timer-controls">
+        <button class="timer-btn" id="timerStartBtn">开始</button>
+        <button class="timer-btn" id="timerResetBtn">重置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thumbnail Strip / Grid -->
+  <div class="thumbnail-overlay" id="thumbnailOverlay">
+    <div class="thumbnail-grid" id="thumbnailGrid">
+      <!-- Thumbnails rendered here -->
+    </div>
+  </div>
+
+  <!-- Laser Pointer Canvas -->
+  <canvas class="laser-canvas" id="laserCanvas"></canvas>
+
+  <!-- Initial Overlay -->
+  <div class="start-overlay" id="startOverlay">
+    <div class="start-content">
+      <div class="start-logo">
+        <svg width="48" height="48" viewBox="0 0 28 28" fill="none">
+          <rect x="2" y="2" width="24" height="24" rx="6" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 14L12 18L20 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1 class="start-title">准备开始演示</h1>
+      <p class="start-subtitle">按空格键或点击开始</p>
+      <div class="start-shortcuts">
+        <div class="shortcut-item">
+          <kbd>←</kbd><kbd>→</kbd>
+          <span>切换幻灯片</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>F</kbd>
+          <span>全屏</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>S</kbd>
+          <span>演讲者备注</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>G</kbd>
+          <span>幻灯片导航</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>L</kbd>
+          <span>激光笔</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>Esc</kbd>
+          <span>退出预览</span>
+        </div>
+      </div>
+      <button class="start-btn" id="startPresentBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        开始演示
+      </button>
+    </div>
+  </div>
+
+  <script src="../scripts/components/preview.js" defer></script>
+</body>
+</html>

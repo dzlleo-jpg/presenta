@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设置 - Presenta</title>
+  <link rel="stylesheet" href="../styles/base.css?v=202604171200">
+  <script src="../scripts/data/models.js?v=202604201000" defer></script>
+  <script src="../scripts/lib/api_providers_skill.js?v=202604201155" defer></script>
+  <script src="../scripts/lib/renderer_skill.js?v=202604201000" defer></script>
+  <script src="../scripts/lib/ai_service_integrated.js?v=202604201210" defer></script>
+  <script src="../scripts/lib/generation_modal.js?v=202604211000" defer></script>
+  <style>
+    body {
+      background: #0a0e1a;
+      color: #f0f4ff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .page-header a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .page-header a:hover { color: #fff; }
+    .logo-text { font-weight: 700; font-size: 18px; color: #fff; }
+
+    .page-main {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0 0 4px;
+    }
+    .page-subtitle {
+      font-size: 14px;
+      color: rgba(255,255,255,0.4);
+      margin: 0 0 32px;
+    }
+    .analysis-status {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      margin: 0 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .analysis-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #667eea;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    .analysis-dot.done { background: #4ade80; animation: none; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    /* Tag selector */
+    .tag-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag-option {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tag-option:hover { border-color: rgba(255,255,255,0.2); color: #fff; }
+    .tag-option.active {
+      border-color: #667eea;
+      background: rgba(102,126,234,0.15);
+      color: #fff;
+    }
+
+    /* Mood cards */
+    .mood-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .mood-card {
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mood-card:hover { border-color: rgba(255,255,255,0.2); }
+    .mood-card.active {
+      border-color: #667eea;
+      background: rgba(102,126,234,0.12);
+    }
+    .mood-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .mood-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* Slider */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.1);
+      outline: none;
+    }
+    .slider-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #667eea;
+      cursor: pointer;
+    }
+    .slider-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #667eea;
+      min-width: 36px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Text input */
+    .text-input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    .text-input:focus { outline: none; border-color: #667eea; }
+    .text-input::placeholder { color: rgba(255,255,255,0.25); }
+
+    /* Generate button */
+    .generate-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 12px;
+    }
+    .generate-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(102,126,234,0.3);
+    }
+    .generate-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .doc-info {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 24px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <a href="../index.html">
+      <span class="logo-text">Presenta</span>
+    </a>
+  </header>
+
+  <main class="page-main">
+    <h1 class="page-title">设置演示偏好</h1>
+    <p class="page-subtitle">调整后点击生成，AI 将为你创建完整幻灯片</p>
+
+    <div class="analysis-status" id="analysisStatus">
+      <span class="analysis-dot" id="analysisDot"></span>
+      <span id="analysisText">正在分析文档…</span>
+    </div>
+
+    <!-- 受众 -->
+    <div class="form-group">
+      <label class="form-label">目标受众</label>
+      <div class="tag-options" id="audienceOptions">
+        <div class="tag-option" data-value="高管决策层">高管决策层</div>
+        <div class="tag-option" data-value="投资人">投资人</div>
+        <div class="tag-option" data-value="内部团队">内部团队</div>
+        <div class="tag-option" data-value="客户">客户</div>
+        <div class="tag-option" data-value="技术人员">技术人员</div>
+      </div>
+    </div>
+
+    <!-- 视觉风格 -->
+    <div class="form-group">
+      <label class="form-label">视觉风格</label>
+      <div class="mood-grid" id="moodOptions">
+        <div class="mood-card" data-value="硬核科技感">
+          <div class="mood-name">硬核科技感</div>
+          <div class="mood-desc">深色背景，数据驱动</div>
+        </div>
+        <div class="mood-card" data-value="高端品牌">
+          <div class="mood-name">高端品牌</div>
+          <div class="mood-desc">融资路演，增长导向</div>
+        </div>
+        <div class="mood-card" data-value="稳重大气">
+          <div class="mood-name">稳重大气</div>
+          <div class="mood-desc">商务风格，信任感</div>
+        </div>
+        <div class="mood-card" data-value="明快创意">
+          <div class="mood-name">明快创意</div>
+          <div class="mood-desc">活力色彩，情感共鸣</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页数 -->
+    <div class="form-group">
+      <label class="form-label">页数</label>
+      <div class="slider-row">
+        <input type="range" id="pageSlider" min="6" max="24" value="12" step="1">
+        <span class="slider-value" id="pageValue">12</span>
+      </div>
+    </div>
+
+    <!-- 标题 -->
+    <div class="form-group">
+      <label class="form-label">标题（可选）</label>
+      <input type="text" class="text-input" id="titleInput" placeholder="留空则由 AI 自动生成">
+    </div>
+
+    <button class="generate-btn" id="generateBtn">生成演示文稿</button>
+
+    <div class="doc-info" id="docInfo"></div>
+  </main>
+
+  <script src="../scripts/components/wizard_skill.js?v=202604211000" defer></script>
+</body>
+</html>
