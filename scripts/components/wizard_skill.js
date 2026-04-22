@@ -123,10 +123,12 @@
     else if (kw(['高管', '决策', '董事'])) audience = '高管决策层';
     else if (kw(['技术', '架构', '开发', 'API'])) audience = '技术人员';
 
-    let mood = '稳重大气';
-    if (kw(['科技', 'AI', '算法', '数据'])) mood = '硬核科技感';
-    else if (kw(['品牌', '融资', '增长'])) mood = '高端品牌';
-    else if (kw(['创意', '设计', '年轻'])) mood = '明快创意';
+    let mood = 'editorial-swiss';
+    if (kw(['科技', 'AI', '算法', '数据', '开发', 'API', '技术'])) mood = 'tech-dark-mode';
+    else if (kw(['奢侈', '高端', '酒店', '珠宝', '美妆', '精品'])) mood = 'luxury-editorial';
+    else if (kw(['建筑', '地产', '空间', '工艺', '设计'])) mood = 'minimal-architectural';
+    else if (kw(['创意', '时尚', '生活', '文化', '艺术'])) mood = 'moodboard-collage';
+    else if (kw(['品牌', '发布', '营销', '传播'])) mood = 'magazine-big-type';
 
     return {
       reportType,

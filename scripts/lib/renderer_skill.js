@@ -11,171 +11,62 @@ class RendererSkill {
   }
 
   // ============================================
-  // 视觉主题库（10个 preset）
+  // 视觉主题库（从 DesignArchetypes 动态生成）
   // ============================================
   loadPresets() {
-    return {
-      tech: {
-        name: '深色科技风',
-        css: `
-          --bg: #0A0E1A;
-          --bg-2: #111827;
-          --text-1: #F0F4FF;
-          --text-2: rgba(240, 244, 255, 0.55);
-          --accent: #3B82F6;
-          --accent-2: #06B6D4;
-          --warning: #F59E0B;
-          --divider: rgba(59, 130, 246, 0.18);
-          --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-          --font-en: 'Inter', 'DM Sans', 'PingFang SC', sans-serif;
-        `,
+    var archetypes = window.DesignArchetypes || {};
+    var presets = {};
+
+    for (var id in archetypes) {
+      if (!archetypes.hasOwnProperty(id)) continue;
+      var arch = archetypes[id];
+      presets[id] = {
+        name: arch.name,
+        archetype: arch,
+        css: this.archetypeToCSS(arch),
         fontUrl: ''
-      },
-      finance: {
-        name: '深色金融风',
-        css: `
-          --bg: #0D1117;
-          --bg-2: #161B22;
-          --text-1: #E6EDF3;
-          --text-2: rgba(230, 237, 243, 0.50);
-          --accent: #D4AF37;
-          --accent-2: #4ADE80;
-          --warning: #F87171;
-          --divider: rgba(212, 175, 55, 0.20);
-          --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-          --font-en: 'DM Sans', 'Inter', 'PingFang SC', sans-serif;
-        `,
+      };
+    }
+
+    // 旧预设名别名（向后兼容已保存项目）
+    if (presets['tech-dark-mode']) { presets['tech'] = presets['tech-dark-mode']; presets['finance'] = presets['tech-dark-mode']; presets['dark-minimal'] = presets['tech-dark-mode']; }
+    if (presets['editorial-swiss']) { presets['business'] = presets['editorial-swiss']; presets['consulting'] = presets['editorial-swiss']; presets['government'] = presets['editorial-swiss']; }
+    if (presets['magazine-big-type']) { presets['startup'] = presets['magazine-big-type']; }
+    if (presets['moodboard-collage']) { presets['brand'] = presets['moodboard-collage']; }
+    if (presets['minimal-architectural']) { presets['academic'] = presets['minimal-architectural']; presets['medical'] = presets['minimal-architectural']; }
+
+    if (Object.keys(presets).length === 0) {
+      presets['editorial-swiss'] = {
+        name: 'Default',
+        archetype: null,
+        css: '--bg:#FFFFFF;--bg-2:#FAFAF7;--text-1:#0A0A0B;--text-2:#6B6863;--accent:#003366;--accent-2:#003366;--warning:#D97706;--divider:#D9D7D0;--font-cn:-apple-system,sans-serif;--font-en:-apple-system,sans-serif;--font-heading:Georgia,serif;',
         fontUrl: ''
-      },
-      business: {
-        name: '商务稳重风',
-        css: `
-          --bg: #1E293B;
-          --bg-2: #334155;
-          --text-1: #F8FAFC;
-          --text-2: rgba(248, 250, 252, 0.60);
-          --accent: #3B82F6;
-          --accent-2: #60A5FA;
-          --warning: #EF4444;
-          --divider: rgba(59, 130, 246, 0.20);
-          --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-          --font-en: 'Inter', 'PingFang SC', sans-serif;
-        `,
-        fontUrl: ''
-      },
-      startup: {
-        name: '融资路演风',
-        css: `
-          --bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-          --bg-2: rgba(255, 255, 255, 0.05);
-          --text-1: #FFFFFF;
-          --text-2: rgba(255, 255, 255, 0.60);
-          --accent: #667eea;
-          --accent-2: #764ba2;
-          --warning: #F59E0B;
-          --divider: rgba(102, 126, 234, 0.25);
-          --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-          --font-en: 'Space Grotesk', 'Inter', 'PingFang SC', sans-serif;
-        `,
-        fontUrl: ''
-      },
-      brand: {
-        name: '品牌创意风',
-        css: `
-          --bg: #FF6B6B;
-          --bg-2: rgba(255, 255, 255, 0.15);
-          --text-1: #FFFFFF;
-          --text-2: rgba(255, 255, 255, 0.75);
-          --accent: #FFE66D;
-          --accent-2: #4ECDC4;
-          --warning: #FF4757;
-          --divider: rgba(255, 255, 255, 0.25);
-          --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-          --font-en: 'Work Sans', 'Inter', 'PingFang SC', sans-serif;
-        `,
-        fontUrl: ''
-      },
-      consulting: {
-        name: '咨询专业风',
-        css: `
-          --bg: #FAFAF8;
-          --bg-2: #F0EDE8;
-          --text-1: #1A1A2E;
-          --text-2: #6B7280;
-          --accent: #1E3A5F;
-          --accent-2: #C0392B;
-          --warning: #E67E22;
-          --divider: rgba(30, 58, 95, 0.15);
-          --font-cn: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
-          --font-en: 'Playfair Display', 'Georgia', serif;
-        `,
-        fontUrl: ''
-      },
-      academic: {
-        name: '学术严谨风',
-        css: `
-          --bg: #F7F5F0;
-          --bg-2: #EDEAE3;
-          --text-1: #2C2C2C;
-          --text-2: #6B6B6B;
-          --accent: #2D4A3E;
-          --accent-2: #8B6914;
-          --warning: #C0392B;
-          --divider: rgba(45, 74, 62, 0.18);
-          --font-cn: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
-          --font-en: 'EB Garamond', 'Georgia', serif;
-        `,
-        fontUrl: ''
-      },
-      government: {
-        name: '政务庄重风',
-        css: `
-          --bg: #FFFFFF;
-          --bg-2: #F5F5F5;
-          --text-1: #1A1A1A;
-          --text-2: #666666;
-          --accent: #C41E3A;
-          --accent-2: #8B0000;
-          --warning: #D4AF37;
-          --divider: rgba(196, 30, 58, 0.15);
-          --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-          --font-en: 'Noto Sans SC', 'PingFang SC', sans-serif;
-        `,
-        fontUrl: ''
-      },
-      medical: {
-        name: '医疗健康风',
-        css: `
-          --bg: #F0F9FF;
-          --bg-2: #E0F2FE;
-          --text-1: #0C4A6E;
-          --text-2: #0369A1;
-          --accent: #0EA5E9;
-          --accent-2: #0284C7;
-          --warning: #DC2626;
-          --divider: rgba(14, 165, 233, 0.20);
-          --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-          --font-en: 'Inter', 'PingFang SC', sans-serif;
-        `,
-        fontUrl: ''
-      },
-      'dark-minimal': {
-        name: '极简深色风',
-        css: `
-          --bg: #000000;
-          --bg-2: #111111;
-          --text-1: #FFFFFF;
-          --text-2: rgba(255, 255, 255, 0.50);
-          --accent: #FFFFFF;
-          --accent-2: #888888;
-          --warning: #FF4444;
-          --divider: rgba(255, 255, 255, 0.10);
-          --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-          --font-en: 'Inter', 'PingFang SC', sans-serif;
-        `,
-        fontUrl: ''
-      }
-    };
+      };
+      presets['tech'] = presets['editorial-swiss'];
+      presets['business'] = presets['editorial-swiss'];
+    }
+
+    return presets;
+  }
+
+  archetypeToCSS(arch) {
+    var c = arch.color;
+    var t = arch.typography;
+    var warning = c.mode === 'dark' ? '#F59E0B' : '#D97706';
+    return `
+      --bg: ${c.neutral.bg};
+      --bg-2: ${c.neutral.surface};
+      --text-1: ${c.neutral.text};
+      --text-2: ${c.neutral.text_muted};
+      --accent: ${c.accent.primary};
+      --accent-2: ${c.accent.secondary || c.accent.primary};
+      --warning: ${warning};
+      --divider: ${c.neutral.hairline};
+      --font-cn: ${t.families.body.stack};
+      --font-en: ${t.families.body.stack};
+      --font-heading: ${t.families.heading.stack};
+      ${t.families.mono ? '--font-mono: ' + t.families.mono.stack + ';' : ''}
+    `;
   }
 
   // ============================================
@@ -190,7 +81,8 @@ class RendererSkill {
       throw new Error('无法解析 planning.yaml');
     }
 
-    const preset = this.presets[planning.visual_preset] || this.presets.tech;
+    const archetypeId = planning.archetype || planning.visual_preset || 'editorial-swiss';
+    const preset = this.presets[archetypeId] || this.presets['editorial-swiss'] || Object.values(this.presets)[0];
     const slides = [];
     const totalSlides = (planning.chapters || []).reduce((sum, chapter) => {
       return sum + ((chapter?.slides || []).length);
@@ -247,6 +139,11 @@ class RendererSkill {
   renderSlide(slide, preset, planning) {
     const pageRole = slide.page_role || 'support';
     const renderer = this.getPageRenderer(pageRole);
+    const arch = preset.archetype;
+    const ts = arch ? arch.typography.scale : null;
+    const grid = arch ? arch.grid : null;
+
+    const imageryHtml = this.renderImagePlaceholder(slide.imagery, arch, pageRole);
 
     return `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -257,38 +154,31 @@ class RendererSkill {
   <style>
     :root {
       ${preset.css}
-      /* 字号/间距变量（编辑器滑块控制） */
       --font-size-base: 24px;
-      --font-size-h1: 80px;
-      --font-size-h2: 56px;
-      --font-size-h3: 36px;
-      --font-size-h4: 32px;
-      --font-size-body: 18px;
-      --font-size-small: 16px;
-      --font-size-xs: 14px;
-      --font-size-hero: 160px;
+      --font-size-h1: ${ts ? ts.h1.size_px : 80}px;
+      --font-size-h2: ${ts ? ts.h2.size_px : 56}px;
+      --font-size-h3: ${ts ? Math.round(ts.h2.size_px * 0.7) : 36}px;
+      --font-size-h4: ${ts ? Math.round(ts.h2.size_px * 0.6) : 32}px;
+      --font-size-body: ${ts ? ts.body.size_px : 18}px;
+      --font-size-small: ${ts ? Math.max(ts.body.size_px - 2, 14) : 16}px;
+      --font-size-xs: ${ts ? ts.label.size_px + 3 : 14}px;
+      --font-size-hero: ${ts ? ts.display.size_px : 160}px;
       --font-size-stat: 48px;
-      /* 间距和行高变量 */
-      --slide-padding-x: 64px;
-      --slide-padding-y: 48px;
-      --slide-gap: 48px;
-      --slide-element-gap: 16px;
-      --line-height: 1.5;
-      --line-height-tight: 1.1;
+      --slide-padding-x: ${grid ? grid.margin : 64}px;
+      --slide-padding-y: ${grid ? Math.round(grid.margin * 0.5) : 48}px;
+      --slide-gap: ${grid ? grid.gutter * 2 : 48}px;
+      --slide-element-gap: ${grid ? grid.gutter : 16}px;
+      --line-height: ${ts ? ts.body.line_height : 1.5};
+      --line-height-tight: ${ts ? ts.h1.line_height : 1.1};
       --line-height-loose: 1.9;
+      --heading-weight: ${ts ? ts.h1.weight : 700};
+      --body-weight: ${ts ? ts.body.weight : 400};
+      --heading-tracking: ${ts ? ts.h1.tracking : -0.015}em;
+      --label-tracking: ${ts ? ts.label.tracking : 0.06}em;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
 
     body {
       font-family: var(--font-cn);
@@ -297,12 +187,17 @@ class RendererSkill {
       display: flex;
       flex-direction: column;
       position: relative;
-    }
-
-    /* 通用文字行高 */
-    .slide-container > * {
+      font-weight: var(--body-weight);
       line-height: var(--line-height);
     }
+
+    h1, h2, .cover-title, .chapter-title, .hero-number {
+      font-family: var(--font-heading, var(--font-cn));
+      font-weight: var(--heading-weight);
+      letter-spacing: var(--heading-tracking);
+    }
+
+    .slide-container > * { line-height: var(--line-height); }
 
     .slide-container {
       flex: 1;
@@ -313,17 +208,24 @@ class RendererSkill {
       overflow: hidden;
     }
 
-    .font-en {
-      font-family: var(--font-en);
+    .font-en { font-family: var(--font-en); }
+
+    .chapter-number, .col-label, .page-label {
+      letter-spacing: var(--label-tracking);
+      text-transform: uppercase;
+      font-size: var(--font-size-xs);
+      font-weight: 500;
     }
 
+    ${this.getImagePlaceholderCSS()}
     ${this.getCommonStyles()}
     ${this.getTransitionStyles(planning.transitions, slide.index)}
   </style>
 </head>
 <body data-slide-id="slide-${slide.index}" data-role="${pageRole}">
+  ${imageryHtml}
   ${renderer(slide, preset, planning)}
-  ${this.renderSpeakerNotes(slide)}
+  ${this.renderSpeakerNotes(slide, arch)}
 </body>
 </html>`;
   }
@@ -735,6 +637,68 @@ class RendererSkill {
   }
 
   // ============================================
+  // 图片占位渲染
+  // ============================================
+
+  renderImagePlaceholder(imagery, arch, pageRole) {
+    if (!imagery || imagery.role === 'none' || !imagery.role) return '';
+    var treatment = arch ? arch.imagery_script.tonal_treatment : 'cool-wash';
+    var c = arch ? arch.color : null;
+    var bg = this.getTonalGradient(treatment, c);
+    var brief = imagery.content_brief || imagery.role || '';
+
+    if (imagery.scale === 'full-bleed') {
+      return '<div class="img-placeholder img-full-bleed" style="background:' + bg + '">' +
+        '<span class="img-label">' + brief + '</span></div>';
+    }
+    if (imagery.scale === 'ultra-small') {
+      var border = c ? c.accent.primary : '#666';
+      return '<div class="img-placeholder img-ultra-small" style="background:' + bg + ';border:1px solid ' + border + '">' +
+        '<span class="img-label">' + (imagery.role || '') + '</span></div>';
+    }
+    return '';
+  }
+
+  getTonalGradient(treatment, color) {
+    var accent = color ? color.accent.primary : '#333';
+    var text = color ? color.neutral.text : '#000';
+    var gradients = {
+      'bw': 'linear-gradient(135deg, #2a2a2a 0%, #4a4a4a 40%, #3a3a3a 100%)',
+      'duotone': 'linear-gradient(135deg, ' + text + ' 0%, ' + accent + ' 100%)',
+      'warm-wash': 'linear-gradient(135deg, #8B7355 0%, #C4A882 50%, #A0845C 100%)',
+      'cool-wash': 'linear-gradient(135deg, #2C3E50 0%, #4A6B8A 50%, #34495E 100%)',
+      'desaturate-30': 'linear-gradient(135deg, #7A7A72 0%, #9A9A8E 50%, #8A8A7E 100%)',
+      'grain-overlay': 'linear-gradient(135deg, #8B7355 0%, #A0845C 50%, #7A6545 100%)'
+    };
+    return gradients[treatment] || gradients['cool-wash'];
+  }
+
+  getImagePlaceholderCSS() {
+    return `
+    .img-placeholder { position: absolute; z-index: 0; }
+    .img-full-bleed {
+      inset: 0;
+      display: flex; align-items: flex-end; justify-content: flex-end;
+      padding: 16px;
+    }
+    .img-full-bleed ~ .slide-container { position: relative; z-index: 1; }
+    .img-ultra-small {
+      bottom: var(--slide-padding-y, 48px);
+      right: var(--slide-padding-x, 64px);
+      width: 100px; height: 68px;
+      border-radius: 2px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .img-label {
+      font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.35); background: rgba(0,0,0,0.25);
+      padding: 3px 8px; border-radius: 2px; max-width: 200px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    `;
+  }
+
+  // ============================================
   // 辅助方法
   // ============================================
 
@@ -757,8 +721,15 @@ class RendererSkill {
   }
 
   // 渲染演讲者备注
-  renderSpeakerNotes(slide) {
-    if (!slide.transcript && !slide.director_note) return '';
+  renderSpeakerNotes(slide, arch) {
+    var hasImagery = slide.imagery && slide.imagery.role && slide.imagery.role !== 'none' && slide.imagery.content_brief;
+    if (!slide.transcript && !slide.director_note && !hasImagery) return '';
+
+    var imagePromptHtml = '';
+    if (hasImagery && arch && arch.imagery_script) {
+      imagePromptHtml = '<div class="notes-imagery"><strong>Image prompt:</strong> ' +
+        arch.imagery_script.prompt_template + ' — ' + slide.imagery.content_brief + '</div>';
+    }
 
     return `
   <div class="speaker-notes" id="speakerNotes">
@@ -766,6 +737,7 @@ class RendererSkill {
     <div class="notes-content">
       ${slide.transcript ? `<div class="notes-transcript">${slide.transcript.replace(/\n/g, '<br>')}</div>` : ''}
       ${slide.director_note ? `<div class="notes-director">${slide.director_note.replace(/\n/g, '<br>')}</div>` : ''}
+      ${imagePromptHtml}
     </div>
   </div>
   <script>
@@ -809,6 +781,14 @@ class RendererSkill {
       color: #aaa;
       font-size: 13px;
       white-space: pre-wrap;
+    }
+    .notes-imagery {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #333;
+      color: #7ab;
+      font-size: 12px;
+      font-family: monospace;
     }
   </style>`;
   }
@@ -1215,3 +1195,4 @@ function sleep(ms) {
 
 // Export
 window.RendererSkill = RendererSkill;
+if (window.PresentaSkills) window.PresentaSkills.register('renderer', RendererSkill);

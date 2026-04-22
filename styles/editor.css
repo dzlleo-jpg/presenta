@@ -17,6 +17,7 @@
   border-radius: 50%;
   filter: blur(80px);
   opacity: 0.15;
+  will-change: transform;
 }
 
 .gradient-orb-1 {
@@ -1319,5 +1320,54 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+/* --- Accessibility: Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .gradient-orb,
+  .canvas-element,
+  .modal,
+  .context-menu,
+  .popup-in,
+  .thumb:hover {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .btn:hover,
+  .btn-icon:hover,
+  .canvas-zoom-btn:hover,
+  .panel-tab:hover,
+  .layout-btn:hover,
+  .export-option:hover {
+    transform: none !important;
+  }
+}
+
+/* --- Accessibility: High Contrast --- */
+@media (prefers-contrast: more) {
+  .modal,
+  .element-toolbar .element-btn,
+  .style-row,
+  .layout-btn,
+  .export-option {
+    border-width: 2px;
+  }
+
+  .btn:focus-visible,
+  .btn-icon:focus-visible,
+  .panel-tab:focus-visible,
+  .layout-btn:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+  }
 }
 

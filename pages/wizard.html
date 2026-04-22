@@ -6,6 +6,9 @@
   <title>设置 - Presenta</title>
   <link rel="stylesheet" href="../styles/base.css?v=202604221000">
   <script src="../scripts/data/models.js?v=202604201000" defer></script>
+  <script src="../scripts/data/design-system/archetypes.js?v=202604221500" defer></script>
+  <script src="../scripts/data/design-system/dna-constraints.js?v=202604221500" defer></script>
+  <script src="../scripts/lib/skill_registry.js?v=202604221500" defer></script>
   <script src="../scripts/lib/api_providers_skill.js?v=202604201155" defer></script>
   <script src="../scripts/lib/renderer_skill.js?v=202604201000" defer></script>
   <script src="../scripts/lib/ai_service_integrated.js?v=202604201210" defer></script>
@@ -104,7 +107,7 @@
     /* Mood cards */
     .mood-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
     }
     .mood-card {
@@ -114,6 +117,8 @@
       background: rgba(255,255,255,0.03);
       cursor: pointer;
       transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
     }
     .mood-card:hover { border-color: rgba(255,255,255,0.2); }
     .mood-card.active {
@@ -130,6 +135,15 @@
       font-size: 12px;
       color: rgba(255,255,255,0.4);
     }
+    .mood-swatch {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      display: flex;
+    }
+    .mood-swatch span { flex: 1; }
 
     /* Slider */
     .slider-row {
@@ -242,21 +256,35 @@
     <div class="form-group">
       <label class="form-label">视觉风格</label>
       <div class="mood-grid" id="moodOptions">
-        <div class="mood-card" data-value="硬核科技感">
-          <div class="mood-name">硬核科技感</div>
-          <div class="mood-desc">深色背景，数据驱动</div>
+        <div class="mood-card" data-value="editorial-swiss">
+          <div class="mood-name">瑞士编辑风</div>
+          <div class="mood-desc">精准数据，权威感</div>
+          <div class="mood-swatch"><span style="background:#FFFFFF"></span><span style="background:#0A0A0B"></span><span style="background:#003366"></span><span style="background:#D9D7D0"></span></div>
         </div>
-        <div class="mood-card" data-value="高端品牌">
-          <div class="mood-name">高端品牌</div>
-          <div class="mood-desc">融资路演，增长导向</div>
+        <div class="mood-card" data-value="magazine-big-type">
+          <div class="mood-name">杂志大字风</div>
+          <div class="mood-desc">大胆表达，品牌力</div>
+          <div class="mood-swatch"><span style="background:#F5F3EE"></span><span style="background:#1A1815"></span><span style="background:#E63946"></span><span style="background:#C8C4BA"></span></div>
         </div>
-        <div class="mood-card" data-value="稳重大气">
-          <div class="mood-name">稳重大气</div>
-          <div class="mood-desc">商务风格，信任感</div>
+        <div class="mood-card" data-value="minimal-architectural">
+          <div class="mood-name">极简建筑风</div>
+          <div class="mood-desc">留白奢华，克制美</div>
+          <div class="mood-swatch"><span style="background:#FAFAF7"></span><span style="background:#1A1815"></span><span style="background:#2A2A2C"></span><span style="background:#E0DED6"></span></div>
         </div>
-        <div class="mood-card" data-value="明快创意">
-          <div class="mood-name">明快创意</div>
-          <div class="mood-desc">活力色彩，情感共鸣</div>
+        <div class="mood-card" data-value="moodboard-collage">
+          <div class="mood-name">情绪拼贴风</div>
+          <div class="mood-desc">温暖质感，手作感</div>
+          <div class="mood-swatch"><span style="background:#F2EDE3"></span><span style="background:#2A1F14"></span><span style="background:#8B3A2E"></span><span style="background:#C8B89C"></span></div>
+        </div>
+        <div class="mood-card" data-value="luxury-editorial">
+          <div class="mood-name">奢品编辑风</div>
+          <div class="mood-desc">静奢美学，精致感</div>
+          <div class="mood-swatch"><span style="background:#F8F5EE"></span><span style="background:#1A1612"></span><span style="background:#9B7A3E"></span><span style="background:#D6CFC0"></span></div>
+        </div>
+        <div class="mood-card" data-value="tech-dark-mode">
+          <div class="mood-name">科技暗黑风</div>
+          <div class="mood-desc">深色画布，未来感</div>
+          <div class="mood-swatch"><span style="background:#0A0A0B"></span><span style="background:#F5F3EE"></span><span style="background:#D4FF3A"></span><span style="background:#2A2A2C"></span></div>
         </div>
       </div>
     </div>

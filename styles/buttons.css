@@ -1,0 +1,307 @@
+/* =============================================
+   Presenta - Button Components
+   Unified button system with variants and states
+   ============================================= */
+
+/* --- Base Button --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Disabled state */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Focus state (accessibility) */
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* --- Button Variant: Primary --- */
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(107, 124, 246, 0.2);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active:not(:disabled) {
+  background: #5A6BE8;
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(107, 124, 246, 0.3);
+}
+
+.btn-primary:disabled {
+  background: var(--color-primary-muted);
+}
+
+/* --- Button Variant: Secondary --- */
+.btn-secondary {
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-bg-elevated);
+  border-color: var(--color-border-accent);
+  color: var(--color-text-primary);
+}
+
+.btn-secondary:active:not(:disabled) {
+  background: var(--color-bg-surface);
+  transform: scale(0.98);
+}
+
+/* --- Button Variant: Ghost --- */
+.btn-ghost {
+  background: none;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--color-bg-surface);
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+.btn-ghost:active:not(:disabled) {
+  background: transparent;
+  transform: scale(0.98);
+}
+
+/* --- Button Variant: Icon --- */
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: var(--color-bg-elevated);
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+.btn-icon:active:not(:disabled) {
+  background: var(--color-bg-surface);
+  transform: scale(0.95);
+}
+
+.btn-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* --- Button Variant: Accent --- */
+.btn-accent {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: white;
+  box-shadow: 0 4px 16px rgba(107, 124, 246, 0.3);
+}
+
+.btn-accent:hover:not(:disabled) {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.btn-accent:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-accent:disabled {
+  background: linear-gradient(135deg, var(--color-primary-muted), var(--color-accent-glow));
+}
+
+/* --- Button Sizes --- */
+.btn-sm {
+  padding: var(--space-1) var(--space-3);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.btn-lg {
+  padding: var(--space-3) var(--space-6);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* --- Button Groups --- */
+.btn-group {
+  display: inline-flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.btn-group .btn {
+  margin: 0;
+}
+
+.btn-group.vertical {
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.btn-group.vertical .btn {
+  width: 100%;
+}
+
+/* --- Loading State --- */
+.btn.loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Badge (for notifications) --- */
+.btn .badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: -4px;
+  background: var(--color-error);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* --- Icon Button with Label --- */
+.btn-icon-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: auto;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-icon-label:hover {
+  background: var(--color-bg-elevated);
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+.btn-icon-label svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  .btn {
+    padding: var(--space-2) var(--space-3);
+    font-size: 13px;
+  }
+
+  .btn-lg {
+    padding: var(--space-2) var(--space-4);
+    font-size: 14px;
+  }
+
+  .btn-group {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--space-2);
+  }
+
+  .btn-group .btn {
+    width: 100%;
+  }
+}
+
+/* --- Accessibility --- */
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn:hover,
+  .btn:active,
+  .btn-icon,
+  .btn-icon:hover,
+  .btn.loading::after {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* --- Dark mode focus ring --- */
+@media (prefers-color-scheme: dark) {
+  .btn:focus-visible {
+    outline: 2px solid var(--color-primary-hover);
+    outline-offset: 2px;
+  }
+}
+
+/* --- High contrast mode --- */
+@media (prefers-contrast: more) {
+  .btn {
+    border: 2px solid currentColor;
+  }
+
+  .btn-icon {
+    border: 2px solid var(--color-border-strong);
+  }
+
+  .btn-primary:focus-visible,
+  .btn-secondary:focus-visible,
+  .btn-ghost:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}

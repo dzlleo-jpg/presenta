@@ -56,12 +56,18 @@ const APIProvidersSkill = {
       const mood = answers.mood || '高端品牌';
 
       const presetMap = {
-        '硬核科技感': 'tech',
-        '高端品牌': 'startup',
-        '稳重大气': 'business',
-        '明快创意': 'brand'
+        '硬核科技感': 'tech-dark-mode',
+        '高端品牌': 'editorial-swiss',
+        '稳重大气': 'editorial-swiss',
+        '明快创意': 'moodboard-collage',
+        'editorial-swiss': 'editorial-swiss',
+        'magazine-big-type': 'magazine-big-type',
+        'minimal-architectural': 'minimal-architectural',
+        'moodboard-collage': 'moodboard-collage',
+        'luxury-editorial': 'luxury-editorial',
+        'tech-dark-mode': 'tech-dark-mode'
       };
-      const preset = presetMap[mood] || 'tech';
+      const preset = presetMap[mood] || 'editorial-swiss';
 
       const slides = this.buildMockSlides({ title, pageCount });
       const chapters = this.groupSlidesByChapter(slides);
@@ -452,13 +458,24 @@ const APIProvidersSkill = {
         lines.push(this.formatChartYaml(slide.chart, indent + 2));
       }
 
+      var imgRole = 'none';
+      var imgScale = 'none';
+      var imgBrief = '';
+      if (slide.page_role === 'cover') { imgRole = 'atmospheric'; imgScale = 'full-bleed'; imgBrief = '品牌氛围背景'; }
+      else if (slide.page_role === 'chapter_break') { imgRole = 'atmospheric'; imgScale = 'full-bleed'; imgBrief = '章节过渡氛围'; }
+      else if (slide.page_role === 'closing') { imgRole = 'atmospheric'; imgScale = 'full-bleed'; imgBrief = '结尾氛围'; }
+      lines.push(`${child}imagery:`);
+      lines.push(`${child}  role: ${this.yamlQuote(imgRole)}`);
+      lines.push(`${child}  scale: ${this.yamlQuote(imgScale)}`);
+      lines.push(`${child}  content_brief: ${this.yamlQuote(imgBrief)}`);
+
       lines.push(this.formatBlock('transcript', slide.transcript, indent + 2));
       return lines.join('\n');
     },
 
     formatMockPlanning({ title, audience, pageCount, mood, preset, chapters, transitions }) {
       const yaml = [
-        'schema_version: "1.0"',
+        'schema_version: "2.0"',
         'schema_name: "Presenta Planning Schema"',
         '',
         `title: ${this.yamlQuote(title)}`,
@@ -470,7 +487,7 @@ const APIProvidersSkill = {
         `framework_reason: ${this.yamlQuote('融资路演需要用故事建立情感连接，再展示数据')}`,
         `core_thesis: ${this.yamlQuote('我们不是在卖产品，而是在创造一个新的市场品类')}`,
         '',
-        `visual_preset: ${this.yamlQuote(preset)}`,
+        `archetype: ${this.yamlQuote(preset)}`,
         `preset_reason: ${this.yamlQuote(`${mood}最能传递${audience === '投资人' ? '增长愿景' : '专业可信度'}`)}`,
         '',
         'chapters:'
@@ -575,15 +592,15 @@ const APIProvidersSkill = {
 ## 输出格式
 
 \`\`\`yaml
-schema_version: "1.0"
+schema_version: "2.0"
 title: "标题"
 audience: "受众"
 page_count: 12
 narrative_framework: "A/B/C/D/E/F"
 framework_reason: "一句话"
 core_thesis: "核心论点"
-visual_preset: "tech/startup/business/brand"
-preset_reason: "一句话"
+archetype: "editorial-swiss/magazine-big-type/minimal-architectural/moodboard-collage/luxury-editorial/tech-dark-mode"
+archetype_reason: "一句话"
 chapters:
   - name: "章节名"
     slides:
@@ -596,6 +613,10 @@ chapters:
           【空间分配】主角占比与布局
         sidebar: "边栏内容，无则留空"
         insight: "洞察≤15字，无则留空"
+        imagery:
+          role: "hero/supporting/atmospheric/none"
+          scale: "full-bleed/ultra-small/none"
+          content_brief: "图片内容描述"
         items:
           - "要素≤25字"
         chart:
@@ -612,6 +633,9 @@ chapters:
 ## 规则
 - cover/closing 各1页，climax 最多2页，不能连续3页 support
 - chart: 趋势→line，对比→bar，占比→pie/donut，单一数字不画图表
+- 每页只有一个视觉焦点，留白≥40%
+- imagery: ≥30%的页面需要图片(hero/supporting/atmospheric)，图片尺寸二选一：full-bleed(全屏)或ultra-small(≤12%面积)，禁止中间尺寸
+- cover和chapter_break适合atmospheric全屏图，climax和insight通常无图
 - 紧凑输出，不要冗余描述
 
 直接输出 YAML，不要其他内容。`;
@@ -620,12 +644,15 @@ chapters:
     buildUserPrompt(documentContent, wizardAnswers) {
       const { audience, scenario, pageCount, mood, title } = wizardAnswers;
 
-      const moodToPresetHint = {
-        '硬核科技感': 'tech',
-        '高端品牌': 'startup',
-        '稳重大气': 'business',
-        '明快创意': 'brand'
-      };
+      var archetype = mood || 'editorial-swiss';
+      var archetypeData = window.DesignArchetypes ? window.DesignArchetypes[archetype] : null;
+      var imageryHint = '';
+      if (archetypeData && archetypeData.imagery_script) {
+        var s = archetypeData.imagery_script;
+        imageryHint = '\n- 图像风格：' + s.primary_language + '，色调：' + s.tonal_treatment +
+          '\n- 图像覆盖率目标：' + s.coverage_target +
+          '\n- 文字与图片关系：' + s.type_image_relation;
+      }
 
       return `材料内容：
 ${documentContent.slice(0, 6000)}
@@ -633,9 +660,9 @@ ${documentContent.slice(0, 6000)}
 用户已确认的偏好（直接使用，不需要重新推断）：
 - 目标受众：${audience || '通用'}
 - 篇幅：${pageCount || 12}页
-- 视觉预设：${moodToPresetHint[mood] || 'business'}
+- 风格原型：${archetype}
 ${title ? `- 标题：${title}` : '- 标题：由你根据内容生成'}
-${scenario ? `- 叙事框架偏好：${scenario}` : ''}
+${scenario ? `- 叙事框架偏好：${scenario}` : ''}${imageryHint}
 
 生成 planning.yaml。`;
     },
@@ -993,3 +1020,4 @@ function sleep(ms) {
 
 // Export for use
 window.APIProvidersSkill = APIProvidersSkill;
+if (window.PresentaSkills) window.PresentaSkills.register('api-providers', APIProvidersSkill);
