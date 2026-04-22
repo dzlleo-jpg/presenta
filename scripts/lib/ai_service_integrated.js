@@ -81,13 +81,13 @@ const AIServiceIntegrated = {
       let simPct = 10;
       let simMsgIdx = 0;
       simInterval = this.provider !== 'mock' ? setInterval(() => {
-        if (simPct < 70) {
+        if (simPct < 85) {
           simPct += 2 + Math.random() * 3;
-          simPct = Math.min(simPct, 70);
+          simPct = Math.min(simPct, 85);
         }
         simMsgIdx = Math.min(simMsgIdx + 1, plannerMessages.length - 1);
         onProgress?.({ phase: 'planner', progress: Math.round(simPct), message: plannerMessages[simMsgIdx] });
-      }, 3000) : null;
+      }, 1500) : null;
 
       console.log('[AIService] runPlanner 开始...');
       const planningYaml = await this.runPlanner(documentContent, wizardAnswers, {

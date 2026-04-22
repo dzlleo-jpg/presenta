@@ -69,7 +69,9 @@
   // ============================================
   function loadProject() {
     try {
-      project = JSON.parse(localStorage.getItem('presenta-current-project') || 'null');
+      const saved = sessionStorage.getItem('presenta-current-project') ||
+                    localStorage.getItem('presenta-current-project');
+      project = JSON.parse(saved || 'null');
       if (project) {
         slides = project.slides || [];
       }

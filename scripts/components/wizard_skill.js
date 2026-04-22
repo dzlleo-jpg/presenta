@@ -6,20 +6,31 @@
 
   function init() {
     loadProject();
+    if (!project) return;
     bindUI();
     runAnalysis();
+    const main = document.getElementById('pageMain');
+    if (main) main.style.opacity = '1';
   }
 
   function loadProject() {
     const saved = sessionStorage.getItem('presenta-current-project') ||
                   localStorage.getItem('presenta-current-project');
-    if (!saved) { window.location.href = '../index.html'; return; }
+    if (!saved) {
+      showEmptyState('请先上传文档');
+      return;
+    }
 
     try {
       project = JSON.parse(saved);
       documentContent = project?.source_materials?.[0]?.parsed_text ||
                         project?.source_materials?.[0]?.content ||
                         project?.source_materials?.[0]?.raw_input || '';
+
+      if (!documentContent) {
+        showEmptyState('文档内容为空，请重新上传');
+        return;
+      }
 
       const src = project.source_materials?.[0];
       if (src) {
@@ -31,7 +42,17 @@
       if (project.wizard_answers) applyAnswers(project.wizard_answers);
     } catch (e) {
       console.error('[Wizard] load failed:', e);
-      window.location.href = '../index.html';
+      showEmptyState('数据加载失败');
+    }
+  }
+
+  function showEmptyState(msg) {
+    const main = document.getElementById('pageMain');
+    if (main) {
+      main.innerHTML = '<div style="text-align:center;padding:80px 20px">' +
+        '<p style="color:rgba(255,255,255,0.5);margin-bottom:20px">' + msg + '</p>' +
+        '<a href="../index.html" style="color:#667eea;text-decoration:none">返回首页上传文档</a></div>';
+      main.style.opacity = '1';
     }
   }
 
@@ -67,34 +88,55 @@
 
     if (project?.analysis) {
       applyAnswers(project.analysis);
-      if (dot) dot.classList.add('done');
-      if (text) text.textContent = '文档分析完成';
-      return;
-    }
-
-    if (!documentContent || typeof AIServiceIntegrated === 'undefined') {
-      if (status) status.style.display = 'none';
-      return;
-    }
-
-    try {
-      AIServiceIntegrated.loadPreferences();
-      const result = await AIServiceIntegrated.analyzeDocument(documentContent);
-
-      if (result && project) {
+    } else if (documentContent) {
+      const result = localAnalyze(documentContent);
+      if (project) {
         project.analysis = result;
         const ser = JSON.stringify(project);
         localStorage.setItem('presenta-current-project', ser);
         sessionStorage.setItem('presenta-current-project', ser);
-        applyAnswers(result);
       }
-
-      if (dot) dot.classList.add('done');
-      if (text) text.textContent = '文档分析完成';
-    } catch (e) {
-      console.error('[Wizard] analysis failed:', e);
-      if (status) status.style.display = 'none';
+      applyAnswers(result);
     }
+
+    if (dot) dot.classList.add('done');
+    if (text) text.textContent = '文档已就绪';
+  }
+
+  function localAnalyze(text) {
+    const len = text.length;
+    const pageCount = len < 2000 ? 6 : len < 5000 ? 8 : len < 10000 ? 12 : len < 20000 ? 16 : 20;
+
+    const kw = (words) => words.some(w => text.includes(w));
+
+    let reportType = '专业报告';
+    if (kw(['融资', '投资', '估值', '路演'])) reportType = '融资路演';
+    else if (kw(['季度', 'Q1', 'Q2', 'Q3', 'Q4', '汇报', '总结'])) reportType = '工作汇报';
+    else if (kw(['竞品', '竞争', '对标'])) reportType = '竞品分析';
+    else if (kw(['产品介绍', '功能', '特性', '解决方案'])) reportType = '产品介绍';
+    else if (kw(['战略', '规划', '提案'])) reportType = '战略提案';
+    else if (kw(['行业', '市场', '趋势', '报告'])) reportType = '行业报告';
+
+    let audience = '内部团队';
+    if (kw(['投资人', '投资者', '融资'])) audience = '投资人';
+    else if (kw(['客户', '用户', '合作'])) audience = '客户';
+    else if (kw(['高管', '决策', '董事'])) audience = '高管决策层';
+    else if (kw(['技术', '架构', '开发', 'API'])) audience = '技术人员';
+
+    let mood = '稳重大气';
+    if (kw(['科技', 'AI', '算法', '数据'])) mood = '硬核科技感';
+    else if (kw(['品牌', '融资', '增长'])) mood = '高端品牌';
+    else if (kw(['创意', '设计', '年轻'])) mood = '明快创意';
+
+    return {
+      reportType,
+      audienceRecommendation: audience,
+      recommendedMood: mood,
+      suggestedPageCount: pageCount,
+      recommendedScenario: '数据叙事',
+      coreThesis: '',
+      chapterOutline: []
+    };
   }
 
   function applyAnswers(a) {
@@ -137,6 +179,12 @@
   }
 
   async function startGeneration() {
+    const genBtn = document.getElementById('generateBtn');
+    if (genBtn) {
+      genBtn.disabled = true;
+      genBtn.textContent = '正在准备…';
+    }
+
     const answers = collectAnswers();
 
     if (project) {
@@ -149,13 +197,17 @@
 
     if (typeof GenerationModal === 'undefined' || typeof AIServiceIntegrated === 'undefined') {
       alert('组件未加载，请刷新页面');
+      if (genBtn) { genBtn.disabled = false; genBtn.textContent = '生成演示文稿'; }
       return;
     }
 
     AIServiceIntegrated.loadPreferences();
 
     GenerationModal.show({
-      onRetry: () => startGeneration(),
+      onRetry: () => {
+        if (genBtn) { genBtn.disabled = false; genBtn.textContent = '生成演示文稿'; }
+        startGeneration();
+      },
       onSettings: () => window.location.href = '../index.html'
     });
 
@@ -189,11 +241,13 @@
         },
         onError: (msg) => {
           GenerationModal.onError(msg);
+          if (genBtn) { genBtn.disabled = false; genBtn.textContent = '生成演示文稿'; }
         }
       });
     } catch (err) {
       console.error('[Wizard] generation error:', err);
       GenerationModal.onError(err.message || '生成失败');
+      if (genBtn) { genBtn.disabled = false; genBtn.textContent = '生成演示文稿'; }
     }
   }
 

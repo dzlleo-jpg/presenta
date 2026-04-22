@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <!-- PDF.js CDN（解析 PDF 文件用） -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- PDF.js：异步加载，不阻塞页面 -->
   <script>
-    // 设置 PDF.js worker
-    if (window.pdfjsLib) {
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    }
+    (function() {
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      s.async = true;
+      s.onload = function() {
+        if (window.pdfjsLib) {
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+      };
+      document.head.appendChild(s);
+    })();
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Presenta - AI 演示文稿生成</title>
-  <link rel="stylesheet" href="styles/base.css?v=202604171200">
+  <link rel="stylesheet" href="styles/base.css?v=202604221000">
   <link rel="stylesheet" href="styles/landing.css">
   <script src="scripts/data/models.js?v=202604201000" defer></script>
   <script src="scripts/lib/api_providers_skill.js" defer></script>

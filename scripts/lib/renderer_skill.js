@@ -29,7 +29,7 @@ class RendererSkill {
           --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
           --font-en: 'Inter', 'DM Sans', 'PingFang SC', sans-serif;
         `,
-        fontUrl: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap'
+        fontUrl: ''
       },
       finance: {
         name: '深色金融风',
@@ -45,7 +45,7 @@ class RendererSkill {
           --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
           --font-en: 'DM Sans', 'Inter', 'PingFang SC', sans-serif;
         `,
-        fontUrl: 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap'
+        fontUrl: ''
       },
       business: {
         name: '商务稳重风',
@@ -61,7 +61,7 @@ class RendererSkill {
           --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
           --font-en: 'Inter', 'PingFang SC', sans-serif;
         `,
-        fontUrl: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap'
+        fontUrl: ''
       },
       startup: {
         name: '融资路演风',
@@ -77,7 +77,7 @@ class RendererSkill {
           --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
           --font-en: 'Space Grotesk', 'Inter', 'PingFang SC', sans-serif;
         `,
-        fontUrl: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap'
+        fontUrl: ''
       },
       brand: {
         name: '品牌创意风',
@@ -93,7 +93,7 @@ class RendererSkill {
           --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
           --font-en: 'Work Sans', 'Inter', 'PingFang SC', sans-serif;
         `,
-        fontUrl: 'https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap'
+        fontUrl: ''
       },
       consulting: {
         name: '咨询专业风',
@@ -109,7 +109,7 @@ class RendererSkill {
           --font-cn: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
           --font-en: 'Playfair Display', 'Georgia', serif;
         `,
-        fontUrl: 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap'
+        fontUrl: ''
       },
       academic: {
         name: '学术严谨风',
@@ -125,7 +125,7 @@ class RendererSkill {
           --font-cn: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
           --font-en: 'EB Garamond', 'Georgia', serif;
         `,
-        fontUrl: 'https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap'
+        fontUrl: ''
       },
       government: {
         name: '政务庄重风',
@@ -141,7 +141,7 @@ class RendererSkill {
           --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
           --font-en: 'Noto Sans SC', 'PingFang SC', sans-serif;
         `,
-        fontUrl: 'https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap'
+        fontUrl: ''
       },
       medical: {
         name: '医疗健康风',
@@ -157,7 +157,7 @@ class RendererSkill {
           --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
           --font-en: 'Inter', 'PingFang SC', sans-serif;
         `,
-        fontUrl: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap'
+        fontUrl: ''
       },
       'dark-minimal': {
         name: '极简深色风',
@@ -173,7 +173,7 @@ class RendererSkill {
           --font-cn: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
           --font-en: 'Inter', 'PingFang SC', sans-serif;
         `,
-        fontUrl: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap'
+        fontUrl: ''
       }
     };
   }
@@ -254,9 +254,6 @@ class RendererSkill {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${slide.title || 'Slide'} - ${planning.title || 'Presentation'}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="${preset.fontUrl}" rel="stylesheet">
   <style>
     :root {
       ${preset.css}
@@ -824,11 +821,18 @@ class RendererSkill {
     const data = chart.data;
 
     return `
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    (function() {
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+      s.async = true;
+      s.onload = function() { renderChart(); };
+      s.onerror = function() { console.warn('Chart.js load failed'); };
+      document.head.appendChild(s);
+    })();
+    function renderChart() {
       const ctx = document.getElementById('chart-${index}');
-      if (!ctx) return;
+      if (!ctx || typeof Chart === 'undefined') return;
 
       const rootStyles = getComputedStyle(document.documentElement);
       const textColor = rootStyles.getPropertyValue('--text-1').trim();
@@ -871,7 +875,7 @@ class RendererSkill {
           }
         }
       });
-    });
+    }
   </script>`;
   }
 

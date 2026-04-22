@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>设置 - Presenta</title>
-  <link rel="stylesheet" href="../styles/base.css?v=202604171200">
+  <link rel="stylesheet" href="../styles/base.css?v=202604221000">
   <script src="../scripts/data/models.js?v=202604201000" defer></script>
   <script src="../scripts/lib/api_providers_skill.js?v=202604201155" defer></script>
   <script src="../scripts/lib/renderer_skill.js?v=202604201000" defer></script>
@@ -199,6 +199,7 @@
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
+      background: rgba(102,126,234,0.4);
     }
 
     .doc-info {
@@ -216,13 +217,13 @@
     </a>
   </header>
 
-  <main class="page-main">
+  <main class="page-main" id="pageMain" style="opacity:0;transition:opacity 0.3s">
     <h1 class="page-title">设置演示偏好</h1>
     <p class="page-subtitle">调整后点击生成，AI 将为你创建完整幻灯片</p>
 
     <div class="analysis-status" id="analysisStatus">
       <span class="analysis-dot" id="analysisDot"></span>
-      <span id="analysisText">正在分析文档…</span>
+      <span id="analysisText">正在加载…</span>
     </div>
 
     <!-- 受众 -->

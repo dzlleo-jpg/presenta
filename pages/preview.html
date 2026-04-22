@@ -3,191 +3,217 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>幻灯片预览 - Presenta</title>
-  <link rel="stylesheet" href="../styles/base.css">
-  <link rel="stylesheet" href="../styles/preview.css">
-  <script src="../scripts/data/models.js" defer></script>
+  <title>演示 - Presenta</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+    .stage {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .slide-wrap {
+      width: 1280px; height: 720px;
+      position: relative; overflow: hidden;
+      transform-origin: center center;
+    }
+    .slide-wrap iframe {
+      width: 1280px; height: 720px; border: none;
+    }
+
+    .controls {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      padding: 12px 24px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      opacity: 0; transition: opacity 0.3s;
+      z-index: 10;
+    }
+    .controls.visible { opacity: 1; }
+    .controls:hover { opacity: 1; }
+
+    .ctrl-btn {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.8); border-radius: 8px;
+      padding: 8px 12px; cursor: pointer; font-size: 13px;
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.2s;
+    }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+    .ctrl-btn:disabled { opacity: 0.3; cursor: default; }
+    .ctrl-btn svg { width: 16px; height: 16px; }
+
+    .slide-num {
+      color: rgba(255,255,255,0.5); font-size: 13px;
+      min-width: 60px; text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .progress {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 3px;
+      background: rgba(255,255,255,0.1); z-index: 11;
+    }
+    .progress-fill {
+      height: 100%; background: #667eea; transition: width 0.3s;
+    }
+
+    .start-overlay {
+      position: fixed; inset: 0; z-index: 20;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.85);
+      color: #fff; text-align: center;
+    }
+    .start-overlay.hidden { display: none; }
+    .start-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+    .start-hint { font-size: 14px; color: rgba(255,255,255,0.4); margin-bottom: 24px; }
+    .start-btn {
+      padding: 12px 32px; border: none; border-radius: 10px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff; font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .start-btn:hover { transform: translateY(-1px); }
+    .start-keys { margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.3); }
+    .start-keys kbd {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px; padding: 2px 6px; margin: 0 2px;
+    }
+  </style>
 </head>
-<body class="preview-mode">
-  <!-- Main Presentation Area -->
-  <div class="presentation-container" id="presentationContainer">
-    <div class="slide-stage" id="slideStage">
-      <!-- Slides rendered here -->
-    </div>
+<body>
+  <div class="stage" id="stage"></div>
+
+  <div class="controls" id="controls">
+    <button class="ctrl-btn" id="prevBtn" title="上一页">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="slide-num" id="slideNum">1 / 1</span>
+    <button class="ctrl-btn" id="nextBtn" title="下一页">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <button class="ctrl-btn" id="fullscreenBtn" title="全屏">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+        <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+      </svg>
+    </button>
+    <button class="ctrl-btn" id="exitBtn" title="退出">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+      退出
+    </button>
   </div>
 
-  <!-- Control Bar -->
-  <div class="control-bar" id="controlBar">
-    <div class="control-bar-inner">
-      <!-- Left: Navigation -->
-      <div class="control-group control-left">
-        <button class="ctrl-btn" id="firstSlideBtn" title="第一页 (Home)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="11 17 6 12 11 7"/>
-            <polyline points="18 17 13 12 18 7"/>
-          </svg>
-        </button>
-        <button class="ctrl-btn" id="prevSlideBtn" title="上一页 (←)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="15 18 9 12 15 6"/>
-          </svg>
-        </button>
-        <div class="slide-indicator">
-          <span id="currentNum" class="current-num">1</span>
-          <span class="separator">/</span>
-          <span id="totalNum" class="total-num">1</span>
-        </div>
-        <button class="ctrl-btn" id="nextSlideBtn" title="下一页 (→)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="9 18 15 12 9 6"/>
-          </svg>
-        </button>
-        <button class="ctrl-btn" id="lastSlideBtn" title="最后一页 (End)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="13 17 18 12 13 7"/>
-            <polyline points="6 17 11 12 6 7"/>
-          </svg>
-        </button>
-      </div>
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
 
-      <!-- Center: Tools -->
-      <div class="control-group control-center">
-        <button class="ctrl-btn" id="speakerNotesBtn" title="演讲者备注 (S)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10 9 9 9 8 9"/>
-          </svg>
-        </button>
-        <button class="ctrl-btn" id="timerBtn" title="计时器 (T)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
-        </button>
-        <button class="ctrl-btn" id="thumbnailStripBtn" title="幻灯片导航 (G)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7"/>
-            <rect x="14" y="3" width="7" height="7"/>
-            <rect x="3" y="14" width="7" height="7"/>
-            <rect x="14" y="14" width="7" height="7"/>
-          </svg>
-        </button>
-        <div class="ctrl-divider"></div>
-        <button class="ctrl-btn" id="laserBtn" title="激光笔 (L)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"/>
-            <circle cx="12" cy="12" r="8" stroke-dasharray="4 4"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Right: Actions -->
-      <div class="control-group control-right">
-        <button class="ctrl-btn fullscreen-btn" id="fullscreenBtn" title="全屏 (F)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="fullscreenIcon">
-            <polyline points="15 3 21 3 21 9"/>
-            <polyline points="9 21 3 21 3 15"/>
-            <line x1="21" y1="3" x2="14" y2="10"/>
-            <line x1="3" y1="21" x2="10" y2="14"/>
-          </svg>
-        </button>
-        <button class="ctrl-btn" id="exitBtn" title="退出 (Esc)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Progress Bar -->
-  <div class="progress-bar" id="progressBar">
-    <div class="progress-fill" id="progressFill"></div>
-  </div>
-
-  <!-- Speaker Notes Panel -->
-  <div class="speaker-panel" id="speakerPanel">
-    <div class="speaker-panel-header">
-      <h3>演讲者备注</h3>
-      <button class="panel-close-btn" id="closeSpeakerPanel">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-    </div>
-    <div class="speaker-notes" id="speakerNotes">
-      <p class="notes-placeholder">暂无备注</p>
-    </div>
-    <div class="speaker-timer" id="speakerTimer">
-      <span class="timer-display" id="timerDisplay">00:00</span>
-      <div class="timer-controls">
-        <button class="timer-btn" id="timerStartBtn">开始</button>
-        <button class="timer-btn" id="timerResetBtn">重置</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Thumbnail Strip / Grid -->
-  <div class="thumbnail-overlay" id="thumbnailOverlay">
-    <div class="thumbnail-grid" id="thumbnailGrid">
-      <!-- Thumbnails rendered here -->
-    </div>
-  </div>
-
-  <!-- Laser Pointer Canvas -->
-  <canvas class="laser-canvas" id="laserCanvas"></canvas>
-
-  <!-- Initial Overlay -->
   <div class="start-overlay" id="startOverlay">
-    <div class="start-content">
-      <div class="start-logo">
-        <svg width="48" height="48" viewBox="0 0 28 28" fill="none">
-          <rect x="2" y="2" width="24" height="24" rx="6" stroke="currentColor" stroke-width="2"/>
-          <path d="M8 14L12 18L20 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+    <div>
+      <div class="start-title">准备开始演示</div>
+      <div class="start-hint">按空格键或点击开始</div>
+      <button class="start-btn" id="startBtn">开始演示</button>
+      <div class="start-keys">
+        <kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp; <kbd>F</kbd> 全屏 &nbsp; <kbd>Esc</kbd> 退出
       </div>
-      <h1 class="start-title">准备开始演示</h1>
-      <p class="start-subtitle">按空格键或点击开始</p>
-      <div class="start-shortcuts">
-        <div class="shortcut-item">
-          <kbd>←</kbd><kbd>→</kbd>
-          <span>切换幻灯片</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>F</kbd>
-          <span>全屏</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>S</kbd>
-          <span>演讲者备注</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>G</kbd>
-          <span>幻灯片导航</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>L</kbd>
-          <span>激光笔</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>Esc</kbd>
-          <span>退出预览</span>
-        </div>
-      </div>
-      <button class="start-btn" id="startPresentBtn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polygon points="5 3 19 12 5 21 5 3"/>
-        </svg>
-        开始演示
-      </button>
     </div>
   </div>
 
-  <script src="../scripts/components/preview.js" defer></script>
+  <script>
+  (function() {
+    let slides = [];
+    let idx = 0;
+    let presenting = false;
+
+    function loadSlides() {
+      const saved = sessionStorage.getItem('presenta-current-project') ||
+                    localStorage.getItem('presenta-current-project');
+      if (!saved) return;
+      try {
+        const project = JSON.parse(saved);
+        slides = project?.slides || [];
+      } catch (e) {}
+    }
+
+    function render() {
+      const stage = document.getElementById('stage');
+      stage.innerHTML = '';
+      const slide = slides[idx];
+      if (!slide) return;
+
+      if (slide.html) {
+        const wrap = document.createElement('div');
+        wrap.className = 'slide-wrap';
+        const iframe = document.createElement('iframe');
+        iframe.sandbox = 'allow-same-origin allow-scripts';
+        iframe.srcdoc = slide.html;
+        wrap.appendChild(iframe);
+        stage.appendChild(wrap);
+        fitSlide(wrap);
+        window.addEventListener('resize', () => fitSlide(wrap));
+      }
+
+      document.getElementById('slideNum').textContent = (idx + 1) + ' / ' + slides.length;
+      document.getElementById('progressFill').style.width = ((idx + 1) / slides.length * 100) + '%';
+      document.getElementById('prevBtn').disabled = idx === 0;
+      document.getElementById('nextBtn').disabled = idx === slides.length - 1;
+    }
+
+    function fitSlide(wrap) {
+      const sw = window.innerWidth, sh = window.innerHeight;
+      const scale = Math.min(sw / 1280, sh / 720);
+      wrap.style.transform = 'scale(' + scale + ')';
+    }
+
+    function next() { if (idx < slides.length - 1) { idx++; render(); } }
+    function prev() { if (idx > 0) { idx--; render(); } }
+
+    function start() {
+      presenting = true;
+      document.getElementById('startOverlay').classList.add('hidden');
+      document.getElementById('controls').classList.add('visible');
+      setTimeout(() => { if (presenting) document.getElementById('controls').classList.remove('visible'); }, 3000);
+    }
+
+    function exit() {
+      presenting = false;
+      if (document.fullscreenElement) document.exitFullscreen();
+      window.location.href = 'editor.html';
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    document.getElementById('startBtn').addEventListener('click', start);
+    document.getElementById('startOverlay').addEventListener('click', (e) => { if (e.target.id === 'startOverlay') start(); });
+    document.getElementById('prevBtn').addEventListener('click', prev);
+    document.getElementById('nextBtn').addEventListener('click', next);
+    document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+    document.getElementById('exitBtn').addEventListener('click', exit);
+
+    document.addEventListener('mousemove', (e) => {
+      if (!presenting) return;
+      const c = document.getElementById('controls');
+      if (e.clientY > window.innerHeight - 100) c.classList.add('visible');
+      else c.classList.remove('visible');
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (!presenting) start(); else next(); }
+      else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+      else if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFullscreen(); }
+      else if (e.key === 'Escape') { e.preventDefault(); exit(); }
+    });
+
+    loadSlides();
+    if (slides.length) render();
+    else document.getElementById('startOverlay').innerHTML = '<div><div class="start-title">没有幻灯片</div><div class="start-hint"><a href="editor.html" style="color:#667eea">返回编辑器</a></div></div>';
+  })();
+  </script>
 </body>
 </html>

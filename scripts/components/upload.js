@@ -161,6 +161,8 @@
     else if (ext === '.txt') type = 'text';
 
     showProcessingModal();
+    processingStatus.textContent = '正在读取文件…';
+    processingBar.style.width = '10%';
 
     try {
       let parsed_text = '';
@@ -174,14 +176,13 @@
         processingStatus.textContent = '文件读取完成，正在分析…';
         processingBar.style.width = '60%';
       } else if (type === 'pdf') {
-        const pdfjsLib = window.pdfjsLib;
+        let pdfjsLib = window.pdfjsLib;
         if (!pdfjsLib) {
           processingStatus.textContent = '正在加载 PDF 解析器…';
-          for (let i = 0; i < 10; i++) {
-            await sleep(300);
-            if (window.pdfjsLib) break;
+          for (let i = 0; i < 20; i++) {
+            await sleep(500);
+            if (window.pdfjsLib) { pdfjsLib = window.pdfjsLib; break; }
           }
-          pdfjsLib = window.pdfjsLib;
         }
         if (pdfjsLib) {
           processingStatus.textContent = '正在解析 PDF…';
@@ -199,7 +200,9 @@
           parsed_text = textParts.join('\n\n');
           word_count = countWords(parsed_text);
         } else {
-          parsed_text = '[PDF 文件 - 浏览器无法解析，请转为 Markdown 格式上传]';
+          hideProcessingModal();
+          showError('PDF 解析器加载失败（网络问题），请稍后重试或改用 Markdown 格式上传');
+          return;
         }
       } else {
         parsed_text = await readFileAsText(file);

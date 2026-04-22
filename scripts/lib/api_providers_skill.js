@@ -531,7 +531,7 @@ const APIProvidersSkill = {
               { role: 'user', content: userPrompt }
             ],
             temperature: 0.7,
-            max_tokens: 8192
+            max_tokens: 5000
           }),
           signal
         });
@@ -548,7 +548,6 @@ const APIProvidersSkill = {
         const data = await response.json();
         const content = data.choices?.[0]?.message?.content || '';
 
-        // 提取 YAML（可能在 markdown 代码块中）
         const planningYaml = this.extractYaml(content);
 
         if (!planningYaml) {
@@ -571,126 +570,74 @@ const APIProvidersSkill = {
     },
 
     buildSystemPrompt() {
-      return `你是 PPT 内容规划专家（ppt-content-planner Skill）。
+      return `你是 PPT 内容规划专家。根据材料和偏好，生成 planning.yaml。严格只输出 YAML。
 
-## 你的任务
-根据用户提供的材料和偏好，生成一份 planning.yaml 结构化规划文档。
-
-## 输出格式（严格输出 YAML，不要有其他内容）
+## 输出格式
 
 \`\`\`yaml
 schema_version: "1.0"
-schema_name: "Presenta Planning Schema"
-
-# 基本信息
-title: "演讲标题"
-audience: "目标受众描述"
+title: "标题"
+audience: "受众"
 page_count: 12
-duration: "约15分钟"
-
-# 叙事框架
-narrative_framework: "框架字母（A/B/C/D/E/F）"
-framework_reason: "一句话选择理由"
-core_thesis: "一句话核心论点"
-
-# 视觉预设
-visual_preset: "preset名称"
-preset_reason: "一句话推荐理由"
-
-# 章节结构
+narrative_framework: "A/B/C/D/E/F"
+framework_reason: "一句话"
+core_thesis: "核心论点"
+visual_preset: "tech/startup/business/brand"
+preset_reason: "一句话"
 chapters:
   - name: "章节名"
     slides:
       - page_role: "cover/chapter_break/climax/support/insight/comparison/closing"
-        title: "完整观点句，≤20字"
-        page_intent: "认知起点 → 认知终点，叙事功能"
+        title: "观点句≤20字"
+        page_intent: "叙事功能"
         director_note: |
-          【情绪定调】...
-          【内容载体】...
-          【视觉主角】...
-          【空间分配】...
-          【演讲配合】...
-        sidebar: "右侧信息边栏内容，无则留空"
-        insight: "底部洞察文字，≤15字，无则留空"
+          【情绪定调】情绪曲线位置
+          【视觉主角】主角元素与强调方式
+          【空间分配】主角占比与布局
+        sidebar: "边栏内容，无则留空"
+        insight: "洞察≤15字，无则留空"
         items:
-          - "内容要素1，≤25字"
-          - "内容要素2"
-        chart:                          # 需要图表时
-          chart_type: "bar/line/pie/area/scatter/donut"
+          - "要素≤25字"
+        chart:
+          chart_type: "bar/line/pie/donut"
           data:
             type: "line"
-            labels: ["2020", "2021", "2022"]
+            labels: ["标签"]
             datasets:
-              - label: "标签"
-                data: [100, 200, 300]
-            source: "数据来源"
-        transcript: |
-          演讲者逐字稿，30-80字，口语化，用【停顿X秒】标注。
-
-# 全局转场（可选）
-transitions:
-  - from: 1
-    to: 2
-    type: "fade/slide-left/slide-right/scale-in/wipe"
+              - label: "名称"
+                data: [数值]
+            source: "来源"
 \`\`\`
 
-## 关键规则
+## 规则
+- cover/closing 各1页，climax 最多2页，不能连续3页 support
+- chart: 趋势→line，对比→bar，占比→pie/donut，单一数字不画图表
+- 紧凑输出，不要冗余描述
 
-1. **page_role 约束**（硬性规则）：
-   - cover: 全篇仅1页，必须有全出血图片，文字≤3行
-   - chapter_break: 每章节间1页，文字≤2行，禁止图表
-   - climax: 全篇最多2页，核心数字≥120px，主角只能1个
-   - support: 大多数页面，图表宽度≥55%，底部必须有 insight
-   - insight: 纯文字页，字号≥48px，最多2页
-   - closing: 全篇仅1页，必须有行动建议
-
-2. **director_note 五个维度**（必须全部填写）：
-   - 【情绪定调】这一页在全篇情绪曲线的位置
-   - 【内容载体】信息类型，视觉形式，要不要图表
-   - 【视觉主角】主角元素，是否有强调动画
-   - 【空间分配】主角占多少，陪衬退到哪里
-   - 【演讲配合】停顿位置，叙事动画，静态降级
-
-3. **chart_type 选型**：
-   - 时间序列趋势 → line
-   - 类别对比 → bar
-   - 占比关系 → pie/donut
-   - 单一比例 → 直接放大数字，不画图表
-
-4. **字体回退链**（中文环境）：
-   - 英文数字：Inter → PingFang SC → 系统默认
-   - 中文正文：Noto Sans SC → PingFang SC → 系统默认
-
-5. **节奏规则**：
-   - 不能连续3页都是 support
-   - 高潮页前必须有1页铺垫
-   - 全篇只能有1-2个高潮
-
-请直接输出 YAML，不要有其他内容。`;
+直接输出 YAML，不要其他内容。`;
     },
 
     buildUserPrompt(documentContent, wizardAnswers) {
       const { audience, scenario, pageCount, mood, title } = wizardAnswers;
 
-      // 情绪词映射到 preset 提示
       const moodToPresetHint = {
-        '硬核科技感': 'tech（深色科技风，数据驱动）',
-        '高端品牌': 'startup（融资路演风格，增长导向）',
-        '稳重大气': 'business（商务稳重，信任感）',
-        '明快创意': 'brand（活力创意，情感共鸣）'
+        '硬核科技感': 'tech',
+        '高端品牌': 'startup',
+        '稳重大气': 'business',
+        '明快创意': 'brand'
       };
 
       return `材料内容：
-${documentContent.slice(0, 8000)}
+${documentContent.slice(0, 6000)}
 
-用户偏好：
-- 目标受众：${audience}
-- 演示场景：${scenario}
-- 篇幅预期：${pageCount}页
-- 视觉情绪：${mood}（推荐预设：${moodToPresetHint[mood] || '根据情绪自动推断'}）
-${title ? `- 演讲标题：${title}` : ''}
+用户已确认的偏好（直接使用，不需要重新推断）：
+- 目标受众：${audience || '通用'}
+- 篇幅：${pageCount || 12}页
+- 视觉预设：${moodToPresetHint[mood] || 'business'}
+${title ? `- 标题：${title}` : '- 标题：由你根据内容生成'}
+${scenario ? `- 叙事框架偏好：${scenario}` : ''}
 
-请生成完整的 planning.yaml 规划文档。`;
+生成 planning.yaml。`;
     },
 
     extractYaml(content) {
@@ -737,7 +684,7 @@ ${title ? `- 演讲标题：${title}` : ''}
           },
           body: JSON.stringify({
             model,
-            max_tokens: 8192,
+            max_tokens: 5000,
             system: systemPrompt,
             messages: [{ role: 'user', content: userPrompt }]
           }),
@@ -786,7 +733,7 @@ ${title ? `- 演讲标题：${title}` : ''}
           },
           body: JSON.stringify({
             model,
-            max_tokens: 8192,
+            max_tokens: 5000,
             system: systemPrompt,
             messages: [{ role: 'user', content: userPrompt }]
           }),
@@ -851,7 +798,7 @@ ${title ? `- 演讲标题：${title}` : ''}
               { role: 'user', content: userPrompt }
             ],
             temperature: 0.7,
-            max_tokens: 8192
+            max_tokens: 5000
           }),
           signal
         });
@@ -922,7 +869,7 @@ ${title ? `- 演讲标题：${title}` : ''}
               { role: 'user', content: userPrompt }
             ],
             temperature: 0.7,
-            max_tokens: 8192
+            max_tokens: 5000
           }),
           signal
         });
@@ -989,7 +936,7 @@ ${title ? `- 演讲标题：${title}` : ''}
               { role: 'user', content: userPrompt }
             ],
             temperature: 0.7,
-            max_tokens: 8192
+            max_tokens: 5000
           }),
           signal
         });
