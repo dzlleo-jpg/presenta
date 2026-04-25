@@ -1,0 +1,432 @@
+{
+  "$schema_version": "1.2.0",
+  "description": "Six production-ready style archetypes built on the Meridian Design System. Each archetype is a pre-validated bundle of Layer A values that automatically satisfies Layer B DNA when applied.",
+
+  "archetypes": {
+
+    "editorial-swiss": {
+      "name": "Editorial Swiss",
+      "pick_when": ["investor decks", "B2B SaaS", "consulting", "financial reports", "data-heavy narratives"],
+      "signature_move": "Giant numbers + geometric headline + hairline rules",
+      "tonality_keywords": ["precise", "authoritative", "restrained", "credible", "editorial"],
+
+      "color": {
+        "neutral": {
+          "bg": "#F5F4F0",
+          "surface": "#FAF9F6",
+          "text": "#0E1013",
+          "text_muted": "#5A6069",
+          "hairline": "#D8DADC"
+        },
+        "accent": { "primary": "#0E1013", "secondary": "#C9FF3B" },
+        "temperature": "cool",
+        "mode": "light",
+        "variants": {
+          "dark_version": {
+            "bg": "#0E1013",
+            "text": "#F5F4F0",
+            "accent": "#C9FF3B"
+          }
+        }
+      },
+
+      "typography": {
+        "families": {
+          "heading": {
+            "stack": "'Archivo', 'Noto Serif SC', 'PingFang SC', 'Songti SC', system-ui, sans-serif",
+            "category": "geometric-grotesk"
+          },
+          "body": {
+            "stack": "'Inter Tight', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', system-ui, sans-serif",
+            "category": "utilitarian-sans"
+          },
+          "mono": {
+            "stack": "'IBM Plex Mono', 'Noto Sans SC', ui-monospace, monospace"
+          }
+        },
+        "scale": {
+          "display": { "size_px": 112, "weight": 300, "line_height": 0.95, "tracking": -0.035 },
+          "h1":      { "size_px": 88,  "weight": 300, "line_height": 0.95, "tracking": -0.035 },
+          "h2":      { "size_px": 56,  "weight": 300, "line_height": 1.0, "tracking": -0.025 },
+          "body":    { "size_px": 15,  "weight": 400, "line_height": 1.6, "tracking": 0 },
+          "label":   { "size_px": 11,  "weight": 400, "line_height": 1.0, "tracking": 0.12, "uppercase": true }
+        }
+      },
+
+      "grid": { "columns": 12, "gutter": 24, "margin": 48 },
+      "radius": { "none": 0 },
+      "shadow": "none",
+
+      "accent_devices": ["giant-number", "page-label-header", "hairline-divider"],
+
+      "imagery_script": {
+        "primary_language": "architectural-photography",
+        "secondary_language": "product-still-life",
+        "tonal_treatment": "bw_or_duotone",
+        "duotone_default": ["#0E1013", "#5A6069"],
+        "aspect_ratios": ["16:9", "1:1"],
+        "role_ratio_map": { "hero": "16:9", "supporting": "1:1" },
+        "coverage_target": "35-45%",
+        "scale_policy": { "hero": "full-bleed-one-side", "supporting": "ultra-small" },
+        "rhythm": "every 3 pages at least 1 image",
+        "type_image_relation": "separation",
+        "prompt_template": "editorial B&W architectural photograph, single subject, negative space, natural light, high contrast, magazine-quality, Leica M composition"
+      }
+    },
+
+    "magazine-big-type": {
+      "name": "Magazine Big-Type",
+      "pick_when": ["brand launches", "creative pitches", "cultural products", "manifesto decks"],
+      "signature_move": "Display type cropping off canvas",
+      "tonality_keywords": ["bold", "expressive", "cultural", "confident"],
+
+      "color": {
+        "neutral": {
+          "bg": "#F5F4F0",
+          "surface": "#ECEDEE",
+          "text": "#0E1013",
+          "text_muted": "#5A6069",
+          "hairline": "#D8DADC"
+        },
+        "accent": { "primary": "#E5523C" },
+        "temperature": "warm",
+        "mode": "light"
+      },
+
+      "typography": {
+        "families": {
+          "heading": {
+            "stack": "'Archivo', 'Noto Serif SC', 'PingFang SC', system-ui, sans-serif",
+            "category": "geometric-grotesk"
+          },
+          "body": {
+            "stack": "'Inter Tight', 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif",
+            "category": "utilitarian-sans"
+          },
+          "mono": {
+            "stack": "'IBM Plex Mono', 'Noto Sans SC', ui-monospace, monospace"
+          }
+        },
+        "scale": {
+          "display": { "size_px": 160, "weight": 600, "line_height": 0.85, "tracking": -0.03 },
+          "h1":      { "size_px": 88,  "weight": 500, "line_height": 0.95, "tracking": -0.03 },
+          "h2":      { "size_px": 56,  "weight": 500, "line_height": 1.0, "tracking": -0.02 },
+          "body":    { "size_px": 15,  "weight": 400, "line_height": 1.6, "tracking": 0 },
+          "label":   { "size_px": 11,  "weight": 400, "line_height": 1.0, "tracking": 0.12, "uppercase": true }
+        }
+      },
+
+      "grid": { "columns": 12, "gutter": 24, "margin": 48 },
+      "radius": { "none": 0 },
+      "shadow": "none",
+
+      "accent_devices": ["oversized-caption", "page-label-header"],
+
+      "imagery_script": {
+        "primary_language": "editorial-portrait",
+        "secondary_language": "product-still-life",
+        "tonal_treatment": "warm-wash",
+        "aspect_ratios": ["4:5", "16:9"],
+        "role_ratio_map": { "portrait": "4:5", "product": "16:9" },
+        "coverage_target": "50-60%",
+        "scale_policy": { "hero": "full-bleed" },
+        "type_image_relation": "integration",
+        "integration_requirements": {
+          "min_type_size_px": 120,
+          "overlay": "gradient-40"
+        },
+        "prompt_template": "high-fashion editorial portrait, dramatic lighting, 4:5 composition, subject looking away, unified warm magazine tone, Kodak Portra film emulation"
+      }
+    },
+
+    "minimal-architectural": {
+      "name": "Minimal Architectural",
+      "pick_when": ["luxury", "real estate", "architecture", "craft", "hospitality"],
+      "signature_move": "Ultra-wide whitespace + single hero image",
+      "tonality_keywords": ["quiet", "spacious", "restrained", "considered", "luxurious"],
+
+      "color": {
+        "neutral": {
+          "bg": "#FAF9F6",
+          "surface": "#FFFFFF",
+          "text": "#0E1013",
+          "text_muted": "#858A92",
+          "hairline": "#ECEDEE"
+        },
+        "accent": { "primary": "#2A2E35" },
+        "temperature": "neutral",
+        "mode": "light",
+        "variants": {
+          "dark_version": {
+            "bg": "#0E1013",
+            "text": "#F5F4F0",
+            "accent": "#B4B8BD"
+          }
+        }
+      },
+
+      "typography": {
+        "families": {
+          "heading": {
+            "stack": "'Archivo', 'Noto Serif SC', 'PingFang SC', system-ui, sans-serif",
+            "category": "geometric-grotesk"
+          },
+          "body": {
+            "stack": "'Inter Tight', 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif",
+            "category": "utilitarian-sans"
+          },
+          "mono": {
+            "stack": "'IBM Plex Mono', 'Noto Sans SC', ui-monospace, monospace"
+          }
+        },
+        "scale": {
+          "display": { "size_px": 112, "weight": 300, "line_height": 0.95, "tracking": -0.035 },
+          "h1":      { "size_px": 72,  "weight": 300, "line_height": 1.0, "tracking": -0.025 },
+          "h2":      { "size_px": 44,  "weight": 300, "line_height": 1.1, "tracking": -0.015 },
+          "body":    { "size_px": 15,  "weight": 300, "line_height": 1.6, "tracking": 0 },
+          "label":   { "size_px": 11,  "weight": 400, "tracking": 0.12, "uppercase": true }
+        }
+      },
+
+      "grid": { "columns": 12, "gutter": 24, "margin": 64 },
+      "radius": { "none": 0 },
+      "shadow": "none",
+
+      "accent_devices": ["hairline-divider", "page-label-header"],
+
+      "imagery_script": {
+        "primary_language": "architectural-photography",
+        "secondary_language": "abstract-texture",
+        "tonal_treatment": "desaturate-30",
+        "aspect_ratios": ["16:9", "21:9", "1:1"],
+        "role_ratio_map": { "hero": "21:9", "supporting": "1:1" },
+        "coverage_target": "60-70%",
+        "scale_policy": { "hero": "full-bleed", "supporting": "ultra-small-with-wide-margin" },
+        "rhythm": "one large image per page, minimal text",
+        "type_image_relation": "separation",
+        "prompt_template": "minimal architectural photography, single building, overcast sky, desaturated, geometric, no people, 35mm Fujifilm look, wide composition"
+      }
+    },
+
+    "moodboard-collage": {
+      "name": "Moodboard Collage",
+      "pick_when": ["fashion", "lifestyle brand decks", "creative portfolios", "cultural briefs"],
+      "signature_move": "Overlapping images + handwritten accent",
+      "tonality_keywords": ["warm", "tactile", "curated", "human", "textured"],
+
+      "color": {
+        "neutral": {
+          "bg": "#F5F4F0",
+          "surface": "#ECEDEE",
+          "text": "#1A1D22",
+          "text_muted": "#5A6069",
+          "hairline": "#D8DADC"
+        },
+        "accent": { "primary": "#E5523C", "secondary": "#C9FF3B" },
+        "temperature": "warm",
+        "mode": "light"
+      },
+
+      "typography": {
+        "families": {
+          "heading": {
+            "stack": "'Archivo', 'Noto Serif SC', 'PingFang SC', system-ui, sans-serif",
+            "category": "geometric-grotesk"
+          },
+          "body": {
+            "stack": "'Inter Tight', 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif",
+            "category": "utilitarian-sans"
+          },
+          "mono": {
+            "stack": "'IBM Plex Mono', 'Noto Sans SC', ui-monospace, monospace"
+          }
+        },
+        "scale": {
+          "display": { "size_px": 88, "weight": 400, "line_height": 0.95, "tracking": -0.03 },
+          "h1":      { "size_px": 56, "weight": 400, "line_height": 1.0, "tracking": -0.02 },
+          "h2":      { "size_px": 36, "weight": 400, "line_height": 1.1, "tracking": -0.015 },
+          "body":    { "size_px": 15, "weight": 400, "line_height": 1.6, "tracking": 0 },
+          "label":   { "size_px": 11, "weight": 400, "tracking": 0.12, "uppercase": true }
+        }
+      },
+
+      "grid": { "columns": 12, "gutter": 24, "margin": 48 },
+      "radius": { "none": 0 },
+      "shadow": "none",
+
+      "accent_devices": ["handwritten-signature", "oversized-caption", "page-label-header"],
+
+      "imagery_script": {
+        "primary_language": "product-still-life",
+        "secondary_language": "editorial-portrait",
+        "tonal_treatment": "grain-overlay",
+        "grain_intensity": "medium",
+        "unified_palette_wash": "warm earth tones (cream, sage, rust, ochre)",
+        "aspect_ratios": ["1:1", "4:5", "3:4"],
+        "role_ratio_map": { "product": "1:1", "portrait": "4:5", "texture": "3:4" },
+        "coverage_target": "70-80%",
+        "scale_policy": { "hero": "medium-with-rotation", "supporting": "small-scattered" },
+        "allowed_rotation_deg": 5,
+        "type_image_relation": "integration",
+        "integration_requirements": {
+          "accent_type": "handwritten-script",
+          "overlay": "none (text placed in image margin whitespace)"
+        },
+        "prompt_template": "warm earth-tone moodboard collection: ceramic object, linen texture, model silhouette, all in unified cream-sage-rust palette, film grain, analog warmth"
+      }
+    },
+
+    "luxury-editorial": {
+      "name": "Luxury Editorial",
+      "pick_when": ["premium consumer", "beauty", "hospitality", "fine jewelry", "silent luxury"],
+      "signature_move": "Lightweight geometric + silent luxury palette",
+      "tonality_keywords": ["refined", "quiet", "timeless", "precious", "discerning"],
+
+      "color": {
+        "neutral": {
+          "bg": "#F5F4F0",
+          "surface": "#FAF9F6",
+          "text": "#0E1013",
+          "text_muted": "#858A92",
+          "hairline": "#D8DADC"
+        },
+        "accent": { "primary": "#5A6069", "secondary": "#FFB800" },
+        "temperature": "warm",
+        "mode": "light",
+        "variants": {
+          "dark_version": {
+            "bg": "#0E1013",
+            "text": "#F5F4F0",
+            "accent": "#FFB800"
+          }
+        }
+      },
+
+      "typography": {
+        "families": {
+          "heading": {
+            "stack": "'Archivo', 'Noto Serif SC', 'PingFang SC', system-ui, sans-serif",
+            "category": "geometric-grotesk"
+          },
+          "body": {
+            "stack": "'Inter Tight', 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif",
+            "category": "utilitarian-sans"
+          },
+          "mono": {
+            "stack": "'IBM Plex Mono', 'Noto Sans SC', ui-monospace, monospace"
+          }
+        },
+        "scale": {
+          "display": { "size_px": 112, "weight": 300, "line_height": 0.95, "tracking": -0.035 },
+          "h1":      { "size_px": 72,  "weight": 300, "line_height": 1.0, "tracking": -0.025 },
+          "h2":      { "size_px": 44,  "weight": 300, "line_height": 1.1, "tracking": -0.015 },
+          "body":    { "size_px": 15,  "weight": 300, "line_height": 1.6, "tracking": 0 },
+          "label":   { "size_px": 11,  "weight": 400, "tracking": 0.14, "uppercase": true }
+        }
+      },
+
+      "grid": { "columns": 12, "gutter": 24, "margin": 64 },
+      "radius": { "none": 0 },
+      "shadow": "none",
+
+      "accent_devices": ["hairline-divider", "oversized-caption", "page-label-header"],
+
+      "imagery_script": {
+        "primary_language": "product-still-life",
+        "secondary_language": "editorial-portrait",
+        "tonal_treatment": "warm-wash",
+        "saturation_range": "0.15-0.30",
+        "aspect_ratios": ["4:5", "3:4"],
+        "role_ratio_map": { "product": "4:5", "portrait": "3:4" },
+        "coverage_target": "45-55%",
+        "scale_policy": { "hero": "full-bleed", "supporting": "ultra-small-with-generous-margin" },
+        "type_image_relation": "separation",
+        "prompt_template": "silent luxury product photography, cashmere or leather or brass, warm natural light, shadow play, minimal styling, unpopulated, Hermès aesthetic"
+      }
+    },
+
+    "tech-dark-mode": {
+      "name": "Tech Dark Mode",
+      "pick_when": ["AI products", "developer tools", "fintech", "deep tech", "crypto"],
+      "signature_move": "Black canvas + electric accent + mono data",
+      "tonality_keywords": ["precise", "futuristic", "confident", "systems-thinking"],
+
+      "color": {
+        "neutral": {
+          "bg": "#0E1013",
+          "surface": "#1A1D22",
+          "text": "#F5F4F0",
+          "text_muted": "#858A92",
+          "hairline": "#2A2E35"
+        },
+        "accent": { "primary": "#C9FF3B", "secondary": "#FFB800" },
+        "temperature": "cool",
+        "mode": "dark",
+        "variants": {
+          "cyan": { "accent": "#3AEFFF" },
+          "magenta": { "accent": "#FF3A9E" },
+          "amber": { "accent": "#FFB800" },
+          "light_version": {
+            "bg": "#F5F4F0",
+            "text": "#0E1013",
+            "accent": "#0E1013"
+          }
+        }
+      },
+
+      "typography": {
+        "families": {
+          "heading": {
+            "stack": "'Archivo', 'Noto Serif SC', 'PingFang SC', system-ui, sans-serif",
+            "category": "geometric-grotesk"
+          },
+          "body": {
+            "stack": "'Inter Tight', 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif",
+            "category": "utilitarian-sans"
+          },
+          "mono": {
+            "stack": "'IBM Plex Mono', 'Noto Sans SC', ui-monospace, monospace",
+            "usage": "data, code, labels, hairline annotations"
+          }
+        },
+        "scale": {
+          "display": { "size_px": 112, "weight": 300, "line_height": 0.95, "tracking": -0.035 },
+          "h1":      { "size_px": 88,  "weight": 300, "line_height": 0.95, "tracking": -0.03 },
+          "h2":      { "size_px": 56,  "weight": 400, "line_height": 1.0, "tracking": -0.02 },
+          "body":    { "size_px": 15,  "weight": 300, "line_height": 1.6, "tracking": 0 },
+          "label":   { "size_px": 11,  "weight": 400, "tracking": 0.12, "uppercase": true, "family": "mono" }
+        }
+      },
+
+      "grid": { "columns": 12, "gutter": 24, "margin": 48 },
+      "radius": { "none": 0 },
+      "shadow": "none",
+
+      "accent_devices": ["giant-number", "page-label-header", "hairline-divider"],
+
+      "imagery_script": {
+        "primary_language": "abstract-texture",
+        "secondary_language": "3d-render",
+        "tonal_treatment": "cool-wash",
+        "accent_glow_allowed": true,
+        "glow_color": "accent.primary",
+        "aspect_ratios": ["16:9", "21:9"],
+        "role_ratio_map": { "hero": "16:9", "atmospheric": "21:9" },
+        "coverage_target": "40-50%",
+        "scale_policy": { "hero": "full-bleed", "dataviz": "in-grid" },
+        "type_image_relation": "separation",
+        "occasional_integration": "code/numbers over abstract textures allowed if type≥96px",
+        "prompt_template": "abstract 3D render, dark void background, single glowing geometric form, cinematic volumetric light, tech minimalism, Octane render, lime-green emission"
+      }
+    }
+  },
+
+  "archetype_selection_decision_tree": {
+    "data-heavy + B2B/investor": ["editorial-swiss", "tech-dark-mode"],
+    "brand launch + story-led": ["magazine-big-type", "luxury-editorial"],
+    "luxury/craft/architecture": ["minimal-architectural", "luxury-editorial"],
+    "creative/fashion/portfolio": ["moodboard-collage", "magazine-big-type"],
+    "AI/developer/fintech": ["tech-dark-mode", "editorial-swiss"],
+    "philosophy/research/concept": ["minimal-architectural", "tech-dark-mode"]
+  }
+}

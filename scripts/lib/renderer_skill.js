@@ -39,7 +39,7 @@ class RendererSkill {
       presets['editorial-swiss'] = {
         name: 'Default',
         archetype: null,
-        css: '--bg:#FFFFFF;--bg-2:#FAFAF7;--text-1:#0A0A0B;--text-2:#6B6863;--accent:#003366;--accent-2:#003366;--warning:#D97706;--divider:#D9D7D0;--font-cn:-apple-system,sans-serif;--font-en:-apple-system,sans-serif;--font-heading:Georgia,serif;',
+        css: '--bg:#F5F4F0;--bg-2:#FAF9F6;--text-1:#0E1013;--text-2:#5A6069;--accent:#0E1013;--accent-2:#C9FF3B;--warning:#D97706;--divider:#D8DADC;--font-cn:"Inter Tight","Noto Sans SC",system-ui,sans-serif;--font-en:"Inter Tight","Noto Sans SC",system-ui,sans-serif;--font-heading:"Archivo","Noto Serif SC",system-ui,sans-serif;--font-mono:"IBM Plex Mono","Noto Sans SC",ui-monospace,monospace;',
         fontUrl: ''
       };
       presets['tech'] = presets['editorial-swiss'];
@@ -151,23 +151,41 @@ class RendererSkill {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${slide.title || 'Slide'} - ${planning.title || 'Presentation'}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600&family=Inter+Tight:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     :root {
       ${preset.css}
-      --font-size-base: 24px;
-      --font-size-h1: ${ts ? ts.h1.size_px : 80}px;
-      --font-size-h2: ${ts ? ts.h2.size_px : 56}px;
-      --font-size-h3: ${ts ? Math.round(ts.h2.size_px * 0.7) : 36}px;
-      --font-size-h4: ${ts ? Math.round(ts.h2.size_px * 0.6) : 32}px;
-      --font-size-body: ${ts ? ts.body.size_px : 18}px;
-      --font-size-small: ${ts ? Math.max(ts.body.size_px - 2, 14) : 16}px;
-      --font-size-xs: ${ts ? ts.label.size_px + 3 : 14}px;
-      --font-size-hero: ${ts ? ts.display.size_px : 160}px;
-      --font-size-stat: 48px;
-      --slide-padding-x: ${grid ? grid.margin : 64}px;
-      --slide-padding-y: ${grid ? Math.round(grid.margin * 0.5) : 48}px;
-      --slide-gap: ${grid ? grid.gutter * 2 : 48}px;
-      --slide-element-gap: ${grid ? grid.gutter : 16}px;
+      --content-fit: 1;
+      --font-size-base-base: 24px;
+      --font-size-h1-base: ${ts ? ts.h1.size_px : 80}px;
+      --font-size-h2-base: ${ts ? ts.h2.size_px : 56}px;
+      --font-size-h3-base: ${ts ? Math.round(ts.h2.size_px * 0.7) : 36}px;
+      --font-size-h4-base: ${ts ? Math.round(ts.h2.size_px * 0.6) : 32}px;
+      --font-size-body-base: ${ts ? ts.body.size_px : 18}px;
+      --font-size-small-base: ${ts ? Math.max(ts.body.size_px - 2, 14) : 16}px;
+      --font-size-xs-base: ${ts ? ts.label.size_px + 3 : 14}px;
+      --font-size-hero-base: ${ts ? ts.display.size_px : 160}px;
+      --font-size-stat-base: 48px;
+      --slide-padding-x-base: ${grid ? grid.margin : 64}px;
+      --slide-padding-y-base: ${grid ? Math.round(grid.margin * 0.5) : 48}px;
+      --slide-gap-base: ${grid ? grid.gutter * 2 : 48}px;
+      --slide-element-gap-base: ${grid ? grid.gutter : 16}px;
+      --font-size-base: calc(var(--font-size-base-base) * var(--content-fit));
+      --font-size-h1: calc(var(--font-size-h1-base) * var(--content-fit));
+      --font-size-h2: calc(var(--font-size-h2-base) * var(--content-fit));
+      --font-size-h3: calc(var(--font-size-h3-base) * var(--content-fit));
+      --font-size-h4: calc(var(--font-size-h4-base) * var(--content-fit));
+      --font-size-body: calc(var(--font-size-body-base) * var(--content-fit));
+      --font-size-small: calc(var(--font-size-small-base) * var(--content-fit));
+      --font-size-xs: calc(var(--font-size-xs-base) * var(--content-fit));
+      --font-size-hero: calc(var(--font-size-hero-base) * var(--content-fit));
+      --font-size-stat: calc(var(--font-size-stat-base) * var(--content-fit));
+      --slide-padding-x: calc(var(--slide-padding-x-base) * var(--content-fit));
+      --slide-padding-y: calc(var(--slide-padding-y-base) * var(--content-fit));
+      --slide-gap: calc(var(--slide-gap-base) * var(--content-fit));
+      --slide-element-gap: calc(var(--slide-element-gap-base) * var(--content-fit));
       --line-height: ${ts ? ts.body.line_height : 1.5};
       --line-height-tight: ${ts ? ts.h1.line_height : 1.1};
       --line-height-loose: 1.9;
@@ -175,6 +193,8 @@ class RendererSkill {
       --body-weight: ${ts ? ts.body.weight : 400};
       --heading-tracking: ${ts ? ts.h1.tracking : -0.015}em;
       --label-tracking: ${ts ? ts.label.tracking : 0.06}em;
+      --slide-grid-gap: calc(var(--slide-element-gap) * 1.35);
+      --content-measure: min(100%, 68ch);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -184,11 +204,11 @@ class RendererSkill {
       font-family: var(--font-cn);
       background: var(--bg);
       color: var(--text-1);
-      display: flex;
-      flex-direction: column;
+      display: grid;
       position: relative;
       font-weight: var(--body-weight);
       line-height: var(--line-height);
+      text-rendering: optimizeLegibility;
     }
 
     h1, h2, .cover-title, .chapter-title, .hero-number {
@@ -197,24 +217,33 @@ class RendererSkill {
       letter-spacing: var(--heading-tracking);
     }
 
-    .slide-container > * { line-height: var(--line-height); }
+    .slide-container > * {
+      min-width: 0;
+      line-height: var(--line-height);
+    }
 
     .slide-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-auto-rows: min-content;
+      align-content: start;
+      gap: var(--slide-grid-gap);
       padding: var(--slide-padding-y) var(--slide-padding-x);
       position: relative;
       overflow: hidden;
+      isolation: isolate;
     }
 
     .font-en { font-family: var(--font-en); }
 
     .chapter-number, .col-label, .page-label {
+      font-family: var(--font-mono, var(--font-cn));
       letter-spacing: var(--label-tracking);
       text-transform: uppercase;
       font-size: var(--font-size-xs);
-      font-weight: 500;
+      font-weight: 400;
     }
 
     ${this.getImagePlaceholderCSS()}
@@ -222,12 +251,13 @@ class RendererSkill {
     ${this.getTransitionStyles(planning.transitions, slide.index)}
   </style>
 </head>
-<body data-slide-id="slide-${slide.index}" data-role="${pageRole}">
-  ${imageryHtml}
-  ${renderer(slide, preset, planning)}
-  ${this.renderSpeakerNotes(slide, arch)}
-</body>
-</html>`;
+	<body data-slide-id="slide-${slide.index}" data-role="${pageRole}">
+	  ${imageryHtml}
+	  ${renderer(slide, preset, planning)}
+	  ${this.renderSpeakerNotes(slide, arch)}
+	  ${this.renderAutoFitScript()}
+	</body>
+	</html>`;
   }
 
   // ============================================
@@ -258,24 +288,35 @@ class RendererSkill {
       <h1 class="cover-title">${slide.title || planning.title}</h1>
       ${slide.items && slide.items[0] ? `<p class="cover-subtitle">${slide.items[0]}</p>` : ''}
     </div>
-    ${slide.sidebar ? `<div class="slide-sidebar">${slide.sidebar}</div>` : ''}
+    ${slide.sidebar ? `<div class="slide-sidebar meta-rail">${slide.sidebar}</div>` : ''}
   </div>
   <style>
     .cover-page {
-      justify-content: center;
-      align-items: center;
-      text-align: center;
+      align-content: center;
+      grid-template-rows: auto auto;
     }
     .cover-title {
+      max-width: 10ch;
       font-size: var(--font-size-h1);
       font-weight: 700;
       line-height: var(--line-height-tight);
-      margin-bottom: var(--slide-element-gap);
+      margin-bottom: calc(var(--slide-element-gap) * 1.2);
     }
     .cover-subtitle {
+      max-width: 34ch;
       font-size: var(--font-size-h3);
       color: var(--text-2);
       font-weight: 400;
+    }
+    .cover-content {
+      grid-column: 2 / span 8;
+      display: grid;
+      gap: var(--slide-element-gap);
+      align-self: center;
+    }
+    .cover-page .slide-sidebar {
+      grid-column: 12;
+      grid-row: 2;
     }
   </style>`;
   }
@@ -291,9 +332,7 @@ class RendererSkill {
   </div>
   <style>
     .chapter-page {
-      justify-content: center;
-      align-items: flex-start;
-      padding-left: calc(var(--slide-padding-x) * 1.5);
+      align-content: center;
     }
     .chapter-number {
       font-size: var(--font-size-body);
@@ -307,6 +346,11 @@ class RendererSkill {
       font-size: var(--font-size-h1);
       font-weight: 700;
       line-height: var(--line-height-tight);
+    }
+    .chapter-content {
+      grid-column: 2 / span 8;
+      display: grid;
+      gap: var(--slide-element-gap);
     }
   </style>`;
   }
@@ -333,37 +377,36 @@ class RendererSkill {
       }).join('')}
     </div>` : ''}
     ${slide.insight ? `<div class="slide-insight">${slide.insight}</div>` : ''}
-    ${slide.sidebar ? `<div class="slide-sidebar">${slide.sidebar}</div>` : ''}
+    ${slide.sidebar ? `<div class="slide-sidebar meta-rail">${slide.sidebar}</div>` : ''}
   </div>
   <style>
     .climax-page {
-      flex-direction: row;
-      align-items: center;
-      gap: 64px;
+      align-content: center;
     }
     .climax-main {
-      flex: 2;
-      display: flex;
-      flex-direction: column;
+      grid-column: 1 / span 8;
+      display: grid;
+      gap: var(--slide-element-gap);
+      align-self: center;
     }
     .hero-number {
       font-size: var(--font-size-hero);
       font-weight: 800;
       color: var(--accent);
       line-height: 1;
-      margin-bottom: var(--slide-element-gap);
     }
     .hero-label {
       font-size: var(--font-size-h4);
       color: var(--text-2);
+      max-width: 16ch;
     }
     .climax-secondary {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+      grid-column: 9 / -1;
+      display: grid;
       gap: calc(var(--slide-gap) * 0.67);
       border-left: 1px solid var(--divider);
       padding-left: var(--slide-gap);
+      align-self: stretch;
     }
     .secondary-number {
       font-size: var(--font-size-stat);
@@ -376,13 +419,17 @@ class RendererSkill {
       color: var(--text-2);
     }
     .slide-insight {
-      position: absolute;
-      bottom: 48px;
-      left: 64px;
-      right: 64px;
+      grid-column: 1 / span 10;
       font-size: var(--font-size-body);
       color: var(--accent);
       font-weight: 500;
+      padding-top: var(--slide-element-gap);
+      border-top: 1px solid var(--divider);
+      align-self: end;
+    }
+    .climax-page .slide-sidebar {
+      grid-column: 12;
+      grid-row: 3;
     }
   </style>`;
   }
@@ -410,33 +457,35 @@ class RendererSkill {
       </div>` : ''}
     </div>
     ${slide.insight ? `<div class="slide-insight">${slide.insight}</div>` : ''}
-    ${slide.sidebar ? `<div class="slide-sidebar">${slide.sidebar}</div>` : ''}
+    ${slide.sidebar ? `<div class="slide-sidebar meta-rail">${slide.sidebar}</div>` : ''}
   </div>
   ${hasChart ? this.renderChartScript(slide.chart, slide.index) : ''}
   <style>
     .support-page {
-      padding-top: var(--slide-padding-y);
+      align-content: start;
     }
     .slide-title {
+      grid-column: 1 / span 9;
       font-size: var(--font-size-h3);
       font-weight: 700;
-      margin-bottom: calc(var(--slide-gap) * 0.83);
     }
     .support-content {
-      display: flex;
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: ${hasChart ? 'minmax(0, 1.05fr) minmax(0, 1.25fr)' : 'minmax(0, 1fr)'};
       gap: var(--slide-gap);
-      flex: 1;
+      min-height: 0;
     }
     .support-numbers {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      align-content: start;
       gap: calc(var(--slide-gap) * 0.67);
     }
     .number-item {
-      display: flex;
-      flex-direction: column;
+      display: grid;
       gap: 4px;
+      padding-bottom: calc(var(--slide-element-gap) * 1.15);
+      border-bottom: 1px solid var(--divider);
     }
     .number-value {
       font-size: var(--font-size-stat);
@@ -453,31 +502,28 @@ class RendererSkill {
       color: var(--text-2);
     }
     .support-chart {
-      flex: 1.2;
       min-height: 0;
+      min-height: 240px;
       position: relative;
+      background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.58));
+      border: 1px solid var(--divider);
+      padding: calc(var(--slide-element-gap) * 1.3);
     }
     .support-chart canvas {
       width: 100% !important;
       height: 100% !important;
     }
     .slide-insight {
-      margin-top: var(--slide-element-gap);
+      grid-column: 1 / span 10;
       padding-top: var(--slide-element-gap);
       border-top: 1px solid var(--divider);
       font-size: var(--font-size-body);
       color: var(--accent);
       font-weight: 500;
     }
-    .slide-sidebar {
-      position: absolute;
-      right: 64px;
-      top: 50%;
-      transform: translateY(-50%);
-      writing-mode: vertical-rl;
-      font-size: var(--font-size-xs);
-      color: var(--text-2);
-      opacity: 0.7;
+    .support-page .slide-sidebar {
+      grid-column: 12;
+      grid-row: 3;
     }
   </style>`;
   }
@@ -491,12 +537,10 @@ class RendererSkill {
   </div>
   <style>
     .insight-page {
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: calc(var(--slide-padding-y) * 1.5) calc(var(--slide-padding-x) * 1.5);
+      align-content: center;
     }
     .insight-quote {
+      grid-column: 2 / span 9;
       font-size: var(--font-size-h2);
       font-weight: 600;
       line-height: var(--line-height);
@@ -504,9 +548,10 @@ class RendererSkill {
       border: none;
       padding: 0;
       margin: 0;
+      max-width: 14ch;
     }
     .insight-source {
-      margin-top: calc(var(--slide-gap) * 0.83);
+      grid-column: 2 / span 6;
       font-size: var(--font-size-body);
       color: var(--text-2);
       font-style: normal;
@@ -538,23 +583,29 @@ class RendererSkill {
   </div>
   <style>
     .comparison-page {
-      padding-top: var(--slide-padding-y);
+      align-content: start;
     }
     .slide-title {
+      grid-column: 1 / span 9;
       font-size: var(--font-size-h3);
       font-weight: 700;
-      margin-bottom: calc(var(--slide-gap) * 0.83);
     }
     .comparison-grid {
-      display: flex;
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
       gap: var(--slide-gap);
-      flex: 1;
     }
     .comparison-col {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      align-content: start;
       gap: calc(var(--slide-gap) * 0.5);
+    }
+    .comparison-left {
+      grid-column: 1 / span 5;
+    }
+    .comparison-right {
+      grid-column: 7 / span 6;
     }
     .col-label {
       font-size: var(--font-size-body);
@@ -569,12 +620,20 @@ class RendererSkill {
     .comparison-item {
       padding: 20px 24px;
       background: var(--bg-2);
-      border-radius: 8px;
+      border-left: 1px solid var(--divider);
       font-size: var(--font-size-body);
       line-height: var(--line-height);
     }
     .comparison-item.highlight {
       border-left: 4px solid var(--accent);
+    }
+    .comparison-page .slide-insight {
+      grid-column: 1 / span 10;
+      padding-top: var(--slide-element-gap);
+      border-top: 1px solid var(--divider);
+      font-size: var(--font-size-body);
+      color: var(--accent);
+      font-weight: 500;
     }
   </style>`;
   }
@@ -595,35 +654,31 @@ class RendererSkill {
   </div>
   <style>
     .closing-page {
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: calc(var(--slide-padding-y) * 1.5) calc(var(--slide-padding-x) * 1.5);
+      align-content: space-between;
     }
     .closing-title {
+      grid-column: 2 / span 8;
       font-size: var(--font-size-h2);
       font-weight: 700;
-      margin-bottom: calc(var(--slide-gap));
+      max-width: 12ch;
     }
     .closing-points {
-      display: flex;
-      flex-direction: column;
+      grid-column: 2 / span 7;
+      display: grid;
       gap: var(--slide-element-gap);
-      margin-bottom: 64px;
     }
     .closing-point {
       font-size: var(--font-size-body);
       color: var(--text-2);
+      padding-top: calc(var(--slide-element-gap) * 0.85);
+      border-top: 1px solid var(--divider);
     }
     .closing-footer {
-      position: absolute;
-      bottom: 48px;
-      left: 0;
-      right: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      grid-column: 10 / -1;
+      align-self: end;
+      display: grid;
       gap: 8px;
+      justify-items: start;
     }
     .closing-brand {
       font-size: var(--font-size-body);
@@ -884,6 +939,51 @@ class RendererSkill {
       animation: fadeIn 0.6s ease-out;
     }
 
+    .slide-container p,
+    .slide-container li,
+    .slide-container blockquote,
+    .slide-container cite,
+    .slide-container span,
+    .slide-container h1,
+    .slide-container h2,
+    .slide-container h3,
+    .slide-container h4 {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .slide-container p,
+    .slide-container blockquote {
+      max-width: var(--content-measure);
+      text-wrap: pretty;
+    }
+
+    .slide-title,
+    .cover-title,
+    .chapter-title,
+    .closing-title,
+    .insight-quote {
+      text-wrap: balance;
+    }
+
+    .meta-rail,
+    .slide-sidebar {
+      align-self: end;
+      justify-self: end;
+      writing-mode: vertical-rl;
+      font-size: var(--font-size-xs);
+      letter-spacing: var(--label-tracking);
+      color: var(--text-2);
+      opacity: 0.78;
+      text-transform: uppercase;
+    }
+
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--divider);
+    }
+
     /* 数字动画 */
     @keyframes countUp {
       from { opacity: 0; transform: translateY(20px); }
@@ -893,6 +993,50 @@ class RendererSkill {
       animation: countUp 0.8s ease-out;
     }
     `;
+  }
+
+  renderAutoFitScript() {
+    return `
+  <script>
+    (function() {
+      var root = document.documentElement;
+      var slide = document.querySelector('.slide-container');
+      if (!root || !slide) return;
+
+      var minFit = 0.68;
+      var fitRaf = 0;
+
+      function hasOverflow() {
+        return slide.scrollHeight > slide.clientHeight + 1 || slide.scrollWidth > slide.clientWidth + 1;
+      }
+
+      function fitSlide() {
+        if (fitRaf) cancelAnimationFrame(fitRaf);
+        fitRaf = requestAnimationFrame(function() {
+          var fit = 1;
+          var attempts = 0;
+          root.style.setProperty('--content-fit', '1');
+
+          while (attempts < 12 && hasOverflow() && fit > minFit) {
+            fit = Math.max(minFit, Number((fit - 0.04).toFixed(2)));
+            root.style.setProperty('--content-fit', String(fit));
+            attempts += 1;
+          }
+        });
+      }
+
+      window.addEventListener('load', fitSlide);
+      window.addEventListener('resize', fitSlide);
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(fitSlide);
+      } else {
+        setTimeout(fitSlide, 50);
+      }
+
+      fitSlide();
+    })();
+  </script>`;
   }
 
   // 转场动画样式
