@@ -202,33 +202,31 @@ function injectGenModalCSS() {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0,0,0,0);
+      background: rgba(20,16,13,0);
       transition: background 0.3s;
       padding: 20px;
       pointer-events: none;
       visibility: hidden;
     }
     .gen-modal.visible {
-      background: rgba(0,0,0,0.6);
+      background: rgba(20,16,13,0.42);
       pointer-events: auto;
       visibility: visible;
     }
     .gen-modal-content {
       width: 100%;
-      max-width: 360px;
-      background: #1a1a2e;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
+      max-width: 400px;
+      background: #fbf7f1;
+      border: 1px solid rgba(24,19,16,0.16);
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      box-shadow: 0 24px 80px rgba(24,19,16,0.18);
       transform: scale(0.95);
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
     }
     .gen-modal.visible .gen-modal-content {
       transform: scale(1);
     }
 
-    /* Progress */
     .gen-progress-section {
       padding: 32px 28px 24px;
       text-align: center;
@@ -239,64 +237,61 @@ function injectGenModalCSS() {
     .gen-icon {
       width: 48px;
       height: 48px;
-      background: linear-gradient(135deg,#667eea,#764ba2);
-      border-radius: 14px;
+      background: rgba(164,64,47,0.08);
+      border: 1px solid rgba(164,64,47,0.22);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
+      color: #a4402f;
       animation: gen-pulse 2s ease-in-out infinite;
     }
     @keyframes gen-pulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(102,126,234,0.3); }
-      50% { box-shadow: 0 0 0 10px rgba(102,126,234,0); }
+      0%,100% { box-shadow: 0 0 0 0 rgba(164,64,47,0.16); }
+      50% { box-shadow: 0 0 0 10px rgba(164,64,47,0); }
     }
     .gen-message {
       font-size: 15px;
       font-weight: 500;
-      color: rgba(255,255,255,0.85);
+      color: rgba(24,19,16,0.9);
       margin: 0 0 16px;
       min-height: 22px;
     }
     .gen-bar-track {
-      height: 4px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 2px;
+      height: 3px;
+      background: rgba(24,19,16,0.08);
       overflow: hidden;
       margin-bottom: 12px;
     }
     .gen-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg,#667eea,#764ba2);
-      border-radius: 2px;
+      background: #a4402f;
       transition: width 0.4s ease;
     }
     .gen-status {
       font-size: 12px;
-      color: rgba(255,255,255,0.35);
+      color: rgba(24,19,16,0.46);
       margin: 0 0 16px;
       font-variant-numeric: tabular-nums;
       min-height: 18px;
     }
     .gen-status.warn {
-      color: #F59E0B;
+      color: #9d6b1e;
     }
     .gen-abort {
-      background: none;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
-      color: rgba(255,255,255,0.45);
+      background: transparent;
+      border: 1px solid rgba(24,19,16,0.14);
+      color: rgba(24,19,16,0.58);
       font-size: 13px;
       padding: 6px 20px;
       cursor: pointer;
       transition: all 0.2s;
     }
     .gen-abort:hover {
-      border-color: rgba(255,255,255,0.25);
-      color: rgba(255,255,255,0.7);
+      border-color: rgba(24,19,16,0.28);
+      color: rgba(24,19,16,0.84);
+      background: rgba(24,19,16,0.03);
     }
 
-    /* Result */
     .gen-result-section {
       padding: 36px 28px 28px;
       text-align: center;
@@ -304,14 +299,15 @@ function injectGenModalCSS() {
     .gen-done-icon {
       width: 56px;
       height: 56px;
-      background: rgba(74,222,128,0.1);
+      background: rgba(45,106,79,0.08);
+      border: 1px solid rgba(45,106,79,0.18);
       border-radius: 50%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #4ade80;
+      color: #2d6a4f;
       margin-bottom: 14px;
-      animation: gen-pop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      animation: gen-pop 0.4s cubic-bezier(0.22,1,0.36,1);
     }
     @keyframes gen-pop {
       from { transform: scale(0); opacity: 0; }
@@ -319,18 +315,17 @@ function injectGenModalCSS() {
     }
     .gen-done-text {
       font-size: 15px;
-      color: rgba(255,255,255,0.6);
+      color: rgba(24,19,16,0.68);
       margin: 0;
     }
 
-    /* Error */
     .gen-error-section {
       padding: 36px 28px 28px;
       text-align: center;
     }
     .gen-error-msg {
       font-size: 14px;
-      color: rgba(255,255,255,0.5);
+      color: rgba(24,19,16,0.62);
       margin: 0 0 20px;
       line-height: 1.5;
     }
@@ -341,29 +336,27 @@ function injectGenModalCSS() {
     }
     .gen-btn {
       padding: 8px 20px;
-      background: linear-gradient(135deg,#667eea,#764ba2);
-      border: none;
-      border-radius: 8px;
+      background: #181310;
+      border: 1px solid #181310;
       font-size: 13px;
       font-weight: 500;
-      color: #fff;
+      color: #f4efe8;
       cursor: pointer;
       transition: all 0.2s;
     }
     .gen-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(102,126,234,0.3);
+      background: #a4402f;
+      border-color: #a4402f;
     }
     .gen-btn-ghost {
-      background: none;
-      border: 1px solid rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.6);
+      background: transparent;
+      border: 1px solid rgba(24,19,16,0.14);
+      color: rgba(24,19,16,0.68);
     }
     .gen-btn-ghost:hover {
-      border-color: rgba(255,255,255,0.25);
-      color: #fff;
-      box-shadow: none;
-      transform: none;
+      background: rgba(24,19,16,0.03);
+      border-color: rgba(24,19,16,0.28);
+      color: rgba(24,19,16,0.9);
     }
   `;
   document.head.appendChild(style);

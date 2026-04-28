@@ -1,0 +1,945 @@
+{
+  "$schema_version": "aperture-dna-tokens-v0.5",
+  "name": "aperture",
+  "version": "0.5.0",
+  "description": "70% Polestar austerity × 30% Apple precision + Japanese editorial layer + Signature library. Hard-cut tension between Stage and Info modes.",
+
+  "_notes": {
+    "purpose": "Machine-readable companion to aperture.dna.md v0.5. Engineering recipes live in aperture-recipes.md.",
+    "v0_5_changes": [
+      "added recipes_companion reference — aperture-recipes.md (R1 Slide Deck Skeleton, R2 Five-Level Overlay, R3 Vertical Rhythm, R4 Component Library, R5 CSS Reset)",
+      "upgraded media_patterns.A_full_bleed_hero — single flat overlay (0.20) replaced by 5-level overlay system (see Recipes §R2)",
+      "added universal_floor.vertical_rhythm — 8pt grid enforcement, min gap after dividers 32px (see Recipes §R3)",
+      "added cross_medium.ppt_keynote.slide_deck_skeleton — CSS aspect-ratio + container query + scroll-snap, bans JS fitStage (see Recipes §R1)",
+      "bumped version to 0.5.0"
+    ],
+    "v0_4_changes": [
+      "added font_selection block — Latin blacklist (Inter/Roboto/Helvetica/Space Grotesk/Fraunces) and whitelist (Geist/Söhne/Cabinet Grotesk/Satoshi/Lyon Text)",
+      "added ai_slop_anti_patterns block (section 6.3) — third anti-pattern layer covering visual/typography/content/layout AI fingerprints",
+      "added pre_check_protocol step 7 — Anti-AI-Slop self-check (8 items)",
+      "added sandbox_relaxation note — system-ui acceptable in sandbox/widget previews with explicit production-replacement annotation",
+      "added modern_css block — oklch + color-mix interaction state derivation, text-wrap balance/pretty, hanging-punctuation, tabular-nums",
+      "added cross_medium.ppt_keynote.slide_vs_speaker_notes_rules — content allocation between visible slide and speaker notes plus 5-second test",
+      "added variance_dial top-level block — three intensity levels (Editorial/Default/Audacious) controlling whitespace, signature frequency, accent boldness, color_block count"
+    ],
+    "v0_3_changes": [
+      "added pre_check protocol (section 3.5) — mandatory 6-step routine before any artifact generation",
+      "added cjk_typography.size_compensation rules (section 10.6) — Latin 0.85-0.92 of CJK at same line",
+      "added cross_medium.ppt_keynote.min_font_size_px=14 — fixes projection legibility",
+      "added media_patterns.placeholder_schema.visual_levels — 4 standardized visual levels",
+      "added media_patterns.pictogram_count_rule — pictograms not counted toward 3-image limit",
+      "added signatures section — 5 active + 5 experimental placeholders",
+      "all v0.2 spec retained; only additions and fixes"
+    ]
+  },
+
+  "universal_floor": {
+    "min_font_size_px": 11,
+    "min_font_size_px_ppt_projection": 14,
+    "min_contrast_ratio": 4.5,
+    "min_touch_target_pt": 24,
+    "max_line_chars_latin": 75,
+    "max_line_chars_cjk": 25,
+    "min_whitespace_ratio_main": 0.4,
+    "min_type_scale_ratio": 1.25,
+    "min_visual_hierarchy_levels": 3,
+    "max_concurrent_weights": 2,
+    "max_concurrent_font_sizes_per_screen": 5,
+    "max_alignment_columns": 3,
+    "min_line_height_hero_latin": 0.9,
+    "min_line_height_hero_cjk": 1.05,
+    "min_line_height_body_latin": 1.5,
+    "min_line_height_body_cjk": 1.7,
+    "min_line_height_caption": 1.4,
+
+    "vertical_rhythm": {
+      "_v0_5_added": true,
+      "_purpose": "v0.4 playtest exposed collapsed spacing — headings/dividers touching content. 8pt grid now mandatory.",
+      "grid_unit_px": 8,
+      "all_spacing_must_be_multiple_of": 8,
+      "min_gap_after_heading_or_divider_px": 32,
+      "min_gap_between_data_rows_px": 16,
+      "page_padding_must_be_present_all_four_sides": true,
+      "see_recipes": "aperture-recipes.md §R3"
+    }
+  },
+
+  "pre_check_protocol": {
+    "purpose": "v0.2 playtest exposed that spec rules don't auto-trigger. v0.3 makes pre-check mandatory before generation.",
+    "trigger": "before_generating_any_aperture_artifact",
+    "steps": [
+      {
+        "step": 1,
+        "name": "select_subsystem_spectrum_signature",
+        "actions": [
+          "choose subsystem: default_deep | deep_petrol | light_paper | japanese_editorial",
+          "choose brand_spectrum (optional)",
+          "decide if signature applies (default no; if yes, choose 1)"
+        ]
+      },
+      {
+        "step": 2,
+        "name": "compute_text_bandwidth",
+        "actions": [
+          "available_width = container_width × 0.92",
+          "estimate hero max chars per line using char_width_estimates_px",
+          "if hero content exceeds max chars: force wrap or reduce hero size 1 step"
+        ]
+      },
+      {
+        "step": 3,
+        "name": "vertical_height_estimation",
+        "actions": [
+          "sum: top_padding + section_marker_height + hero_block + caption_block + bottom_margin + bottom_padding",
+          "if sum > container_height - 16px safety: invoke fallback_order from layout_safety.vertical_fit_overflow_handling"
+        ]
+      },
+      {
+        "step": 4,
+        "name": "anti_pattern_scan",
+        "actions": [
+          "iterate through all 11 drift_violations in section 6.2",
+          "any yes flag → modify design before proceeding"
+        ]
+      },
+      {
+        "step": 5,
+        "name": "cjk_specific_scan",
+        "trigger": "content_contains_cjk",
+        "actions": [
+          "validate letter-spacing in cjk range",
+          "validate line-height ≥ 1.7 for body",
+          "validate weight pair in [100/200, 400/500]",
+          "validate 0.125em breathing space at script boundaries",
+          "trigger size_compensation rule (section 10.6) for mixed-script same-line content"
+        ]
+      },
+      {
+        "step": 6,
+        "name": "checklist_verification",
+        "actions": [
+          "run all 18 items in quick_checklist",
+          "any fail → return to step 1"
+        ]
+      },
+      {
+        "step": 7,
+        "name": "ai_slop_self_check",
+        "v0_4_added": true,
+        "actions": [
+          "run section 6.3.5 Anti-AI-Slop checklist 8 items",
+          "primary font not in section 4.4 blacklist",
+          "no purple-pink-blue gradients",
+          "no emoji decorations",
+          "no filler verbs (Elevate/Unleash/Seamless/Next-gen)",
+          "data is real or marked as placeholder",
+          "placeholders follow section 11.4 standardized levels (no lorem ipsum)",
+          "no centered hero",
+          "cards not uniform same-size grid",
+          "any fail → revise before shipping"
+        ]
+      }
+    ],
+    "enforcement": "skipping pre_check = not aperture compliant"
+  },
+
+  "style_locked": {
+    "font_family_count": 1,
+    "font_weight_pair": {
+      "latin": { "light_axis": [200, 300], "bold_axis": [500, 600] },
+      "cjk": { "light_axis": [100, 200], "bold_axis": [400, 500] },
+      "japanese_editorial": { "latin": [200, 500], "cjk": [100, 400] }
+    },
+    "font_weight_forbidden": {
+      "latin": [400, 700, 800, 900],
+      "cjk": [300, 600, 700, 800, 900]
+    },
+    "letter_spacing": {
+      "hero_latin_max_em": -0.02,
+      "hero_cjk_em_range": [-0.08, -0.05],
+      "caption_latin_min_em": 0.16,
+      "caption_cjk_em_range": [0.10, 0.15],
+      "data_label_em": 0.04
+    },
+    "border_width_only_px": 0.5,
+    "corner_radius": {
+      "stage_max_px": 0,
+      "info_max_px": 4,
+      "global_max_px": 4
+    },
+    "ratios": {
+      "h1_to_body_min_stage": 5.0,
+      "h1_to_body_min_info": 3.5,
+      "stage_whitespace_ratio_min_default": 0.6,
+      "stage_whitespace_ratio_min_japanese_editorial": 0.7,
+      "bento_gap_px_range": [6, 10]
+    },
+    "accent": {
+      "max_concurrent_default": 1,
+      "max_concurrent_brand_spectrum": 2,
+      "signature_pages_can_exempt_accent_count": true
+    }
+  },
+
+  "font_selection": {
+    "_v0_4_added": true,
+    "_purpose": "Aperture takes a strong stance on fonts. Wrong font = AI fingerprint even if every other rule passes.",
+
+    "latin_blacklist_production": [
+      "Inter",
+      "Roboto",
+      "Helvetica",
+      "Helvetica Neue",
+      "Arial",
+      "Open Sans",
+      "Fraunces",
+      "Space Grotesk"
+    ],
+    "_blacklist_rationale": "These are AI-generated-default fingerprints. In production these must not be primary font-family. They may appear in fallback chains but only after a whitelisted primary.",
+
+    "latin_whitelist_by_context": {
+      "default_modern": ["Geist", "Geist Mono"],
+      "fashion_editorial": ["Söhne", "GT America"],
+      "premium_luxury": ["Cabinet Grotesk", "Satoshi"],
+      "editorial_serif_japanese_editorial_only": ["Lyon Text", "Newsreader", "Instrument Serif"],
+      "data_technical_monospace": ["Geist Mono", "JetBrains Mono"]
+    },
+
+    "cjk_whitelist": [
+      "PingFang SC",
+      "Source Han Sans CN",
+      "Noto Sans CJK SC",
+      "Yu Gothic",
+      "Hiragino Kaku Gothic ProN"
+    ],
+    "cjk_avoid": ["Microsoft YaHei (Windows default — old/cheap feel)", "SimSun/SimHei (system defaults — no design intent)"],
+
+    "sandbox_relaxation": {
+      "applies_to": ["claude_artifact_widgets", "preview_sandboxes", "no_web_font_loading"],
+      "permitted_fallback": "system-ui, -apple-system, BlinkMacSystemFont",
+      "annotation_required": "spec or code header must explicitly state: production replace with {whitelisted_font_name}"
+    },
+
+    "subsystem_font_pairing_recommendations": {
+      "default_deep": "Geist or Söhne",
+      "deep_petrol": "Geist or Söhne",
+      "light_paper": "Geist or Cabinet Grotesk",
+      "color_block": "Geist or Söhne",
+      "japanese_editorial": "Yu Gothic + GT America for Latin segments"
+    }
+  },
+
+  "modern_css": {
+    "_v0_4_added": true,
+    "_purpose": "Modern browser CSS techniques mandated by Aperture v0.4 — oklch color, color-mix derivation, text-wrap balance/pretty, hanging-punctuation, text-spacing-trim.",
+
+    "color_expression": {
+      "primary_format": "oklch",
+      "fallback_format": "hex",
+      "rationale": "oklch keeps hue stable when adjusting lightness; hex/rgb shifts hue on light/dark variation",
+      "browser_support": "Chrome 111+, Safari 15.4+, Firefox 113+ (production-ready)",
+      "default_deep_oklch": {
+        "bg_primary": "oklch(0.13 0 0)",
+        "bg_secondary": "oklch(0.17 0 0)",
+        "text_primary": "oklch(0.98 0 0)",
+        "text_secondary": "oklch(0.50 0.005 264)",
+        "border": "oklch(0.21 0 0)"
+      },
+      "solar_spectrum_accent_oklch": {
+        "copper": "oklch(0.59 0.115 51)",
+        "solar_amber": "oklch(0.62 0.165 41)",
+        "deep_sunset": "oklch(0.41 0.110 50)"
+      }
+    },
+
+    "interaction_state_derivation": {
+      "rule": "use color-mix() not hardcoded hex variants",
+      "ratios": {
+        "hover_dark_subsystems": "accent 85% + black 15%",
+        "hover_light_paper": "accent 85% + white 15%",
+        "active": "accent 75% + black 25%",
+        "disabled": "accent 30% + bg_primary 70%",
+        "accent_secondary_brand_spectrum": "accent_main 70% + bg_primary 30%"
+      },
+      "css_example_hover": "background: color-mix(in oklch, var(--accent) 85%, black);",
+      "forbidden": "hardcoding new hex per state (eg --accent-hover: #9F6841)"
+    },
+
+    "mandated_text_rules": {
+      "text_wrap_balance": {
+        "applies_to": ["h1", "h2", "h3", ".hero", "[class*='hero']"],
+        "css": "text-wrap: balance;",
+        "rationale": "balances multi-line headings, prevents orphan last-line characters"
+      },
+      "text_wrap_pretty": {
+        "applies_to": ["p", ".body", ".caption"],
+        "css": "text-wrap: pretty;",
+        "rationale": "performance-friendly orphan prevention for body text"
+      },
+      "text_spacing_trim": {
+        "applies_to": ["*"],
+        "css": "text-spacing-trim: space-all;",
+        "rationale": "auto-tightens CJK fullwidth punctuation spacing"
+      },
+      "hanging_punctuation": {
+        "applies_to": ["p", ".cjk-body"],
+        "css": "hanging-punctuation: first;",
+        "rationale": "first-character punctuation hangs outside text edge for clean alignment — editorial signature"
+      }
+    },
+
+    "mandated_opentype_features": {
+      "body_default": "font-feature-settings: 'kern', 'liga', 'calt';",
+      "data_and_dashboards": "font-variant-numeric: tabular-nums;",
+      "data_rule": "all numeric content in info moments must be tabular-nums to prevent jitter on update",
+      "hero": "font-feature-settings: 'kern', 'liga', 'lnum';"
+    },
+
+    "browser_fallback_policy": "modern_features_degrade_safely_to_default_behavior_no_polyfill_needed_aperture_does_not_sacrifice_modern_for_legacy"
+  },
+
+  "layout_safety": {
+    "char_width_estimates_px": {
+      "latin_geometric_sans_at_minus_0_02_em": {
+        "size_14": 7,
+        "size_84_hero": 38,
+        "size_140_big_hero": 62
+      },
+      "cjk_block_glyph_at_minus_0_05_em": {
+        "size_14": 14,
+        "size_84_hero": 80,
+        "size_140_big_hero": 134
+      },
+      "digits_punctuation": {
+        "size_14": 5,
+        "size_84_hero": 26,
+        "size_140_big_hero": 44
+      },
+      "latin_uppercase_tracked_0_16_em": {
+        "size_11": 9
+      }
+    },
+    "vertical_fit_overflow_handling": {
+      "fallback_order": [
+        "reduce_hero_one_step",
+        "reduce_caption_to_12px_floor",
+        "reduce_paddings_to_75_percent",
+        "truncate_text_content_never_clip_elements"
+      ]
+    },
+    "auto_fail_states": [
+      "text_bleeds_container_edge",
+      "text_elements_overlap_more_than_2px",
+      "hairline_rule_collapses_below_16px_width",
+      "caption_exceeds_mode_char_limit",
+      "cell_content_clipped_by_overflow_hidden"
+    ]
+  },
+
+  "cjk_typography": {
+    "punctuation_rules": {
+      "line_start_forbidden_chars": ["。", "、", ",", ")", "」", "』", "】", "!", "?", ":", ";"],
+      "line_end_forbidden_chars": ["(", "「", "『", "【"]
+    },
+    "mixed_script": {
+      "latin_cjk_breathing_space_em": 0.125,
+      "latin_baseline_offset_vs_cjk_px": -1
+    },
+    "size_compensation_rules": {
+      "purpose": "Latin has ascenders/descenders adding ~8-12% visual weight vs CJK at same font-size. Mixed-script same-line content needs Latin to be ~85-95% of CJK size for visual balance.",
+      "v0_3_fix_for": "v0.2 P2 issue: 13px CN + 13px Latin same line, Latin too heavy",
+      "ratios_latin_to_cjk": {
+        "hero_same_line": [0.85, 0.92],
+        "body_same_line": [0.92, 0.95],
+        "caption_same_line": [0.95, 1.0]
+      },
+      "examples": {
+        "cjk_hero_84px_should_pair_with_latin": "71-77px (use 72px)",
+        "cjk_body_15px_should_pair_with_latin": "14px"
+      },
+      "additional_rules": [
+        "latin_baseline_offset_minus_1_to_minus_2_px_in_mixed_lines",
+        "0_125em_breathing_space_still_required",
+        "signature_10_punch_exempts_this_rule_intentional_imbalance"
+      ]
+    },
+    "vertical_writing": {
+      "allowed_only_in_native_japanese_text": "japanese_editorial_stage_hero",
+      "signature_4_uses_different_implementation": "flex_column_or_grid_not_writing_mode_vertical",
+      "css_implementation_for_native": "writing-mode: vertical-rl; text-orientation: mixed"
+    },
+    "anti_patterns": [
+      "cjk_using_latin_letter_spacing_minus_0_02_em",
+      "cjk_using_weights_300_or_600",
+      "mixed_script_no_breathing_space",
+      "line_start_with_forbidden_char",
+      "cjk_body_line_height_below_1_7",
+      "mixed_script_same_line_no_size_compensation_v0_3"
+    ]
+  },
+
+  "media_patterns": {
+    "patterns": {
+      "A_full_bleed_hero": {
+        "overlay_required": true,
+        "_v0_5_change": "single flat overlay (opacity 0.20) replaced by 5-level overlay system — see aperture-recipes.md §R2",
+        "overlay_system": {
+          "levels": 5,
+          "level_1_flat": { "method": "linear-gradient rgba overlay", "opacity_range": [0.25, 0.45] },
+          "level_2_gradient": { "method": "bottom-to-transparent gradient", "opacity_range": [0.50, 0.70] },
+          "level_3_vignette": { "method": "radial-gradient vignette", "opacity_range": [0.40, 0.60] },
+          "level_4_scrim_band": { "method": "localized scrim behind text region only", "opacity_range": [0.55, 0.75], "_alias": "text_zone_mask" },
+          "level_5_blur_overlay": { "method": "backdrop-filter blur + semi-transparent overlay", "blur_px_range": [8, 16], "opacity_range": [0.20, 0.35] },
+          "all_levels_common": "text-shadow: 0 1px 3px rgba(0,0,0,0.5)",
+          "selection_rule": "choose lowest level that achieves WCAG AA (4.5:1) contrast"
+        },
+        "see_recipes": "aperture-recipes.md §R2",
+        "text_position": ["left_bottom_third", "right_bottom_third"],
+        "applicable_modes": ["stage"]
+      },
+      "B_bento_cell": {
+        "corner_radius_max_px": 4,
+        "max_brightness_ratio": 0.7,
+        "applicable_modes": ["info"]
+      },
+      "C_side_by_side": {
+        "ratios_allowed": ["1:1.4", "1:1.7", "1:2"],
+        "ratios_forbidden": ["1:1"],
+        "gap_px_range": [8, 16],
+        "applicable_modes": ["stage", "info"]
+      },
+      "D_pictogram": {
+        "size_px_range": [50, 80],
+        "style": "fill_only_no_stroke",
+        "color_constraint": "single_color_accent_or_text_primary",
+        "applicable_modes": ["stage", "info"]
+      },
+      "E_ambient_video": {
+        "max_duration_seconds": 8,
+        "audio": "muted",
+        "max_pixel_change_percent": 5,
+        "overlay_opacity": 0.15,
+        "applicable_modes": ["stage"]
+      }
+    },
+
+    "placeholder_schema": {
+      "purpose": "Standardized visual + AI prompt for missing media",
+      "html_attributes_required": [
+        "data-aperture-media",
+        "data-aspect",
+        "data-pattern",
+        "data-subsystem",
+        "data-placeholder-level"
+      ],
+      "prompt_required_fields": [
+        "ASPECT", "PATTERN", "SUBSYSTEM", "SUBJECT", "COMPOSITION",
+        "MOOD", "PALETTE", "STYLE-TAGS", "FORBIDDEN", "MEDIUM"
+      ],
+      "aspect_ratios_allowed": ["16:9", "1:1", "3:4", "9:16", "4:5", "21:9"],
+      "aspect_ratios_forbidden": ["7:3", "5:4", "non_standard_freeform"],
+
+      "visual_levels": {
+        "_v0_3_fix_purpose": "v0.2 had no visual standardization; different sessions produced inconsistent placeholders.",
+
+        "level_1_solid": {
+          "purpose": "simple replacement, no content cue",
+          "spec": {
+            "background": "bg_secondary",
+            "border": "0.5px accent",
+            "content": "none"
+          }
+        },
+        "level_2_hairline_pattern": {
+          "purpose": "default standard level — use this unless reason to elevate",
+          "spec": {
+            "background": "45deg hairline pattern bg_primary + bg_secondary at 1:11 spacing",
+            "border": "0.5px accent",
+            "content": "none"
+          }
+        },
+        "level_3_centered_tag": {
+          "purpose": "details visible, can stand alone",
+          "spec": {
+            "background": "level_2_pattern",
+            "border": "0.5px accent",
+            "content": {
+              "container": "bg_secondary box with 0.5px accent border",
+              "lines": [
+                "Line 1 — 9px UPPER tracked 0.22em accent: '▣ {Pattern_name} · {Subsystem_name}'",
+                "Line 2 — 11px regular text_primary: '{Subject_one_sentence}'",
+                "Line 3 — 9px UPPER tracked 0.22em text_secondary: '{Aspect_ratio} · See <details> for prompt'"
+              ]
+            }
+          }
+        },
+        "level_4_full_spec_card": {
+          "purpose": "user reviewing before generating media",
+          "spec": {
+            "extends": "level_3",
+            "additional": "expanded <details> with full prompt visible"
+          }
+        }
+      },
+
+      "default_level_per_pattern": {
+        "A_full_bleed_hero": "level_3",
+        "B_bento_cell": "level_2",
+        "C_side_by_side": "level_2",
+        "D_pictogram": "level_2",
+        "E_ambient_video": "level_3",
+        "user_reviewing_context": "level_4"
+      },
+
+      "border_color_rule": "always accent at 0.5px no exceptions"
+    },
+
+    "image_count_rules": {
+      "_v0_3_fix_purpose": "v0.2 didn't specify if pictograms count toward image limit.",
+      "max_photos_or_videos_per_moment": 3,
+      "pictograms_not_counted_toward_photo_video_limit": true,
+      "max_pictograms_per_moment": 6,
+      "max_total_when_mixing_photos_and_pictograms": 8
+    },
+
+    "anti_patterns": [
+      "no_contrast_layer_text_unreadable",
+      "image_emoji_or_cartoon_or_oversaturated",
+      "image_overflows_cell",
+      "more_than_3_photos_or_videos_per_moment",
+      "non_standard_aspect_ratio",
+      "placeholder_missing_prompt_fields",
+      "placeholder_visual_not_at_standard_level_v0_3"
+    ]
+  },
+
+  "ai_slop_anti_patterns": {
+    "_v0_4_added": true,
+    "_purpose": "Third anti-pattern layer beyond ugly (6.1) and drift (6.2). Prevents AI-fingerprint outputs even when other rules pass.",
+
+    "visual_traps": [
+      "purple_pink_blue_full_screen_gradient",
+      "rounded_card_with_left_border_accent_color",
+      "pure_black_000000_background",
+      "neon_outer_glow_text_shadow",
+      "ai_purple_blue_palette_lila_ban",
+      "emoji_decorating_titles",
+      "ai_handdrawn_svg_illustrations_inline",
+      "aggressive_bento_grid_as_default_layout",
+      "hero_three_col_features_testimonials_cta_template",
+      "uniform_equal_size_cards_grid",
+      "centered_hero_h1",
+      "circular_loading_spinner"
+    ],
+
+    "typography_traps": [
+      "see_font_selection_latin_blacklist_production"
+    ],
+
+    "content_traps": {
+      "data_slop_examples_forbidden": [
+        "10000_plus_happy_customers",
+        "99_9_percent_uptime",
+        "trusted_by_fortune_500"
+      ],
+      "data_slop_replacement": "leave_placeholder_or_use_real_specific_numbers_with_units",
+      "filler_verbs_forbidden": ["Elevate", "Unleash", "Transform", "Revolutionize", "Empower", "Disrupt"],
+      "filler_adjectives_forbidden": ["Seamless", "Next-gen", "Cutting-edge", "World-class", "Best-in-class", "Industry-leading"],
+      "generic_names_forbidden": ["John Doe", "Jane Smith", "Acme Corp", "Lorem ipsum"],
+      "vague_promises_forbidden": [
+        "Built_for_the_future",
+        "Designed_with_you_in_mind",
+        "The_X_youve_been_waiting_for"
+      ],
+      "rule": "if_2_or_more_filler_terms_present_section_6_3_auto_fail",
+      "preferred_writing_style": "concrete_nouns_verifiable_numbers_real_verbs_specific_attributes"
+    },
+
+    "layout_traps": [
+      "three_col_equal_width_feature_cards",
+      "every_section_uses_same_layout_formula",
+      "hero_features_pricing_testimonials_footer_template",
+      "lorem_ipsum_in_placeholders_violates_section_11_4"
+    ],
+
+    "auto_fail_quick_checklist": [
+      "primary_font_in_blacklist",
+      "purple_pink_blue_gradient_present",
+      "emoji_decoration_present",
+      "filler_verbs_or_adjectives_2_or_more",
+      "fake_data_not_marked_as_placeholder",
+      "lorem_ipsum_present",
+      "centered_hero_present",
+      "uniform_card_grid_present"
+    ],
+    "auto_fail_rule": "any_one_of_above_8_items_yes_means_revise_before_ship"
+  },
+
+  "signatures": {
+    "_meta_rules": {
+      "purpose": "deliberate breaks-from-norm that elevate aperture from 80% to 90%+. invitations, not requirements.",
+      "max_per_page": 1,
+      "max_percentage_per_deck_or_site": 0.30,
+      "adjacent_pages_cannot_use_same_type": true,
+      "must_have_content_reason": true,
+      "claude_code_default_behavior": "may_proactively_use_0_to_3_per_deck_when_content_supports_it",
+      "exemption_scope": "signature_pages_can_exempt_section_4_constraints_but_not_section_3_universal_floor_or_pre_check"
+    },
+
+    "active": {
+      "signature_2_single_glyph_heroic": {
+        "spirit": "compress entire canvas to 1 character occupying ≥ 50% height",
+        "best_moment": "stage chapter cover / single concept page",
+        "implementation": {
+          "min_glyph_size_px_16x9": 320,
+          "min_glyph_size_px_mobile": 240,
+          "weight": [100, 200],
+          "horizontal_position_percent": [55, 60],
+          "horizontal_position_forbidden": "centered",
+          "color": "default_subsystem_or_pure_black_white_in_color_block",
+          "must_pair_with": "single_line_annotation_le_11px_at_canvas_edge"
+        },
+        "cjk_advantage": "very_high_block_glyphs_are_inherently_graphic",
+        "forbidden": [
+          "stacking_multiple_glyphs",
+          "decorative_additions",
+          "annotation_more_than_one_line"
+        ],
+        "frequency": {
+          "per_deck_max": 1,
+          "per_site_max": 2
+        },
+        "mutual_exclusion_adjacent": ["signature_4", "signature_10"]
+      },
+
+      "signature_4_vertical_tower": {
+        "spirit": "cjk hero text vertically stacked, one glyph per line, challenging horizontal reading",
+        "best_moment": "cjk stage / literary chapter page / manifesto",
+        "implementation": {
+          "glyph_size_px_range": [80, 120],
+          "line_height": [0.95, 1.0],
+          "horizontal_position": "centered_or_left_one_third",
+          "terminal_glyph_must_carry_accent": true,
+          "secondary_content": "latin_translation_plus_caption_to_the_right_or_below",
+          "css_method": "flex_column_or_grid_NOT_writing_mode_vertical",
+          "min_tower_height_glyphs": 4
+        },
+        "cjk_advantage": "extremely_high_latin_only_cannot_replicate",
+        "forbidden": [
+          "terminal_glyph_without_accent",
+          "tower_height_below_4_glyphs"
+        ],
+        "frequency": {
+          "per_cjk_deck_max": 2
+        },
+        "mutual_exclusion_adjacent": ["signature_2", "signature_10"]
+      },
+
+      "signature_7_caption_as_subject": {
+        "spirit": "blow up caption (11-12px) to hero scale; shrink real heading",
+        "best_moment": "manifesto / legal / philosophical / dedication page",
+        "implementation": {
+          "giant_caption_size_px_range": [36, 56],
+          "giant_caption_features_preserved": ["uppercase", "tracked_0_16_em", "accent_color"],
+          "real_heading_size_px_range": [14, 16],
+          "real_heading_weight": 200,
+          "real_heading_color": "text_primary_normal",
+          "whitespace_ratio_min": 0.65,
+          "self_referential_required": true
+        },
+        "content_requirements": {
+          "must_be": "self-referential — content must hint at smallness, fine-print, footnote, detail",
+          "good_examples": [
+            "Subject to RD 1955/2000 — verified in 8 minutes",
+            "In the smallest print, the largest implications"
+          ],
+          "bad_examples": ["any_neutral_declarative_sentence"]
+        },
+        "cjk_advantage": "medium_uppercase_concept_absent_in_cjk_needs_adaptation",
+        "forbidden": "use_without_self_referential_content",
+        "frequency": { "per_deck_max": 1 },
+        "risk_level": "highest_pre_check_must_validate_content_self_reference"
+      },
+
+      "signature_9_type_as_image": {
+        "spirit": "split letters across canvas width, each letter becomes architectural element like periodic table",
+        "best_moment": "product name / brand name / tagline expansion / stage opening",
+        "implementation": {
+          "applicable_word_length_chars": [4, 7],
+          "letter_size_px_range": [140, 180],
+          "letter_weight": 100,
+          "letter_spacing": 0,
+          "layout": "css_grid_one_column_per_letter",
+          "sequence_number_below_each_letter_size_px": [9, 10],
+          "optional_connecting_hairline_at_bottom": true,
+          "one_letter_uses_accent_color": true,
+          "accent_letter_must_have_content_meaning": true
+        },
+        "cjk_advantage": "low_only_works_with_latin",
+        "forbidden": [
+          "cjk_use",
+          "word_length_outside_4_to_7_chars",
+          "accent_letter_choice_without_content_reason"
+        ],
+        "frequency": { "per_deck_max": 1 },
+        "use_for": ["product_name_expansion", "brand_name_pages"]
+      },
+
+      "signature_10_the_punch": {
+        "spirit": "massive latin + tiny cjk same meaning, ratio ≥ 10:1, dramatic east-west collision",
+        "best_moment": "aperture x cjk bilingual manifesto / concept page / cultural counterpoint",
+        "implementation": {
+          "latin_size_px_range": [240, 320],
+          "latin_weight": 100,
+          "cjk_same_meaning_size_px_range": [16, 22],
+          "cjk_weight": 200,
+          "size_ratio_min": 10.0,
+          "explicitly_overrides": "section_10_6_size_compensation_rule",
+          "cjk_baseline_alignment": "bottom_aligned_with_latin_baseline",
+          "cjk_must_have_ratio_tag_9px": true,
+          "footer_caption_must_be_self_aware": true
+        },
+        "cjk_advantage": "extremely_high_requires_bilingual_content",
+        "forbidden": [
+          "latin_and_cjk_not_synonymous",
+          "size_ratio_below_10_to_1",
+          "missing_ratio_tag_or_self_aware_caption"
+        ],
+        "frequency": { "per_aperture_cjk_deck_max": 1 },
+        "mutual_exclusion_adjacent": ["signature_2", "signature_4"]
+      }
+    },
+
+    "experimental": {
+      "_status": "placeholders only, not implemented in v0.3, may activate in v0.4+ based on real project usage",
+      "signature_1_punctuation_as_subject": { "status": "placeholder", "spirit": "punctuation enlarged to hero scale ≥ 400px" },
+      "signature_3_edge_bleed_number": { "status": "placeholder", "spirit": "primary subject crops past container edge, only 2/3 visible" },
+      "signature_5_asymmetric_number_pair": { "status": "placeholder", "spirit": "number trio, deliberately mismatched sizes and offset baselines" },
+      "signature_6_negative_space_logo": { "status": "placeholder", "spirit": "section marker stretched to 60% canvas width, master/subordinate inversion" },
+      "signature_8_the_misalignment": { "status": "placeholder", "spirit": "single element offset 22px from baseline, requires textual drama" }
+    },
+
+    "selection_guide_by_project_type": {
+      "bilingual_brand_manifesto": ["signature_4", "signature_10"],
+      "cultural_publishing_project": ["signature_2", "signature_4"],
+      "b2b_saas_product_page": ["signature_7_with_legal_content", "signature_9_with_product_name"],
+      "ai_product_launch": ["signature_2", "signature_10"],
+      "quarterly_review_ppt": ["signature_4_chapter_pages", "signature_7_summary_page"],
+      "chinese_only_project": ["signature_2", "signature_4"]
+    }
+  },
+
+  "variance_dial": {
+    "_v0_4_added": true,
+    "_purpose": "Aperture is not single-intensity. Same locked DNA flexes from Editorial (1) to Audacious (3) via this dial. Project-level decision, not per-page.",
+
+    "levels": {
+      "1_editorial": {
+        "intent": "serious reports, white papers, government, conservative SaaS",
+        "stage_whitespace_min": 0.70,
+        "info_whitespace_min": 0.50,
+        "signature_frequency_max_percent": 0.10,
+        "accent_saturation_max": 0.20,
+        "color_block_count_max_per_deck": 0,
+        "hero_to_body_ratio_range": [5.0, 6.0],
+        "recommended_signatures": ["signature_4_vertical_tower_chapter", "signature_7_caption_as_subject"],
+        "recommended_subsystems": ["default_deep", "light_paper", "data_palette", "japanese_editorial"],
+        "discouraged_subsystems": ["color_block"],
+        "deep_petrol_use": "use_with_caution"
+      },
+      "2_default": {
+        "intent": "B2B products, content PPT, brand sites — Aperture default behavior",
+        "stage_whitespace_min": 0.60,
+        "info_whitespace_min": 0.40,
+        "signature_frequency_max_percent": 0.30,
+        "accent_saturation_max": 0.30,
+        "color_block_count_max_per_deck": 3,
+        "hero_to_body_ratio_range": [5.0, "open"],
+        "recommended_signatures": ["all_active_signatures_2_4_7_9_10"],
+        "recommended_subsystems": "all"
+      },
+      "3_audacious": {
+        "intent": "brand manifesto, art projects, concept launches",
+        "stage_whitespace_min": 0.55,
+        "info_whitespace_min": 0.35,
+        "signature_frequency_max_percent": 0.50,
+        "accent_saturation_max": 0.50,
+        "color_block_count_max_per_deck": 5,
+        "hero_to_body_ratio_range": [6.0, 10.0],
+        "recommended_signatures": ["all_active_plus_one_experimental_eg_signature_1_punctuation_as_subject"],
+        "recommended_subsystems": "all_with_emphasis_on_color_block_for_chapter_breaks"
+      }
+    },
+
+    "invariants_across_dials": [
+      "section_3_universal_floor",
+      "section_4_style_dna_locked_identity",
+      "section_6_3_ai_slop_anti_patterns",
+      "section_4_4_font_blacklist_whitelist",
+      "section_10_cjk_typography",
+      "section_3_5_pre_check_protocol_7_steps"
+    ],
+
+    "project_default_dial_mapping": {
+      "government_legal_finance_annual_report": 1,
+      "b2b_saas_content_ppt_brand_site": 2,
+      "ai_product_launch_brand_manifesto": "2_or_3",
+      "art_institution_design_project_cultural_exhibit": 3,
+      "solarcomply_b2b_solar_compliance_spain": 2
+    },
+
+    "consistency_rule": {
+      "principle": "dial_is_project_level_not_page_level",
+      "forbidden": "switching dial mid-deck (eg cover audacious + content editorial)",
+      "exception": "info_moment_data_pages_can_feel_quieter_within_audacious_overall_this_is_natural_not_dial_switch"
+    },
+
+    "pre_check_integration": {
+      "step_1_addition": "declare variance_dial level (1/2/3) on first artifact for project; subsequent artifacts inherit"
+    }
+  },
+
+  "subsystems": {
+    "_note": "Subsystem definitions unchanged from v0.2 — see v0.2 tokens for full default_deep / deep_petrol / light_paper / color_block / data_palette / brand_spectrum / japanese_editorial. Below only changes from v0.2.",
+    "default_deep": {
+      "is_default": true,
+      "tokens": {
+        "bg_primary": "#0A0A0A",
+        "bg_secondary": "#131313",
+        "text_primary": "#FAFAFA",
+        "text_secondary": "#6E6F73",
+        "accent": "<spectrum_primary>",
+        "border": "#1F1F1F"
+      }
+    },
+    "japanese_editorial": {
+      "lineage": "Nippon Design Center / Hara Kenya / Sato Kashiwa / MUJI",
+      "spirit": "Ma — whitespace as content",
+      "tokens": {
+        "bg_primary": "#F4EFDE",
+        "bg_secondary": "#FAF7EB",
+        "text_primary": "#1A1A1A",
+        "text_secondary": "#6B5E4F",
+        "accent_seal": "#C62828",
+        "border": "#D4C8B5"
+      }
+    },
+    "brand_spectrum_summary": {
+      "spectrums_available": [
+        "solar_energy", "sustainability_nature", "tech_finance",
+        "health_care", "culture_art", "editorial_media"
+      ]
+    }
+  },
+
+  "checklist": [
+    "pre_check_7_steps_completed_v0_4_includes_ai_slop_scan",
+    "section_marker_present_three_part_or_degraded",
+    "two_weight_groups_only_correct_for_language",
+    "h1_body_ratio_meets_minimum",
+    "single_accent_or_one_main_one_secondary_or_signature_exempt",
+    "all_caption_class_correct_for_language",
+    "stage_corners_0_info_corners_le_4",
+    "no_shadow_no_gradient_except_atmosphere_or_image_overlay",
+    "hard_cut_transitions_only",
+    "whitespace_meets_minimum_for_mode_and_subsystem",
+    "layout_safety_no_overflow_overlap_clipping",
+    "media_in_compliant_pattern_with_proper_contrast",
+    "cjk_content_applies_cjk_typography_rules_with_size_compensation",
+    "ppt_context_all_small_text_ge_14px",
+    "no_drift_anti_patterns_present",
+    "if_signature_used_meta_rules_compliant_and_content_supports_it",
+    "primary_font_not_in_section_4_4_blacklist_v0_4",
+    "ai_slop_8_item_self_check_all_pass_v0_4"
+  ],
+
+  "cross_medium": {
+    "web_desktop": {
+      "min_viewport_px": 1280,
+      "stage_hero_px_range": [84, 96],
+      "info_bento_gap_px": 8
+    },
+    "ppt_keynote": {
+      "aspect_ratio": "16:9",
+      "stage_hero_px_range": [96, 140],
+      "min_font_size_px_projection": 14,
+      "_v0_3_fix": "v0.2 lacked projection min font size, causing 9px legends in playtest",
+      "rules": [
+        "all_small_text_must_be_ge_14px_for_projection_legibility",
+        "chapter_pages_must_use_color_block_subsystem",
+        "data_pages_must_use_data_palette_subsystem"
+      ],
+      "slide_vs_speaker_notes_rules": {
+        "_v0_4_added": true,
+        "slide_visible_layer_must_contain": [
+          "exactly_one_information_focus",
+          "necessary_chart_or_visual",
+          "section_marker_and_page_number"
+        ],
+        "slide_visible_layer_forbidden": [
+          "more_than_4_bullet_points",
+          "detailed_explanations_examples_quotes",
+          "complete_paragraphs"
+        ],
+        "speaker_notes_must_contain": [
+          "talking_points_3_to_5_per_slide_not_reading_screen",
+          "transition_sentence_to_next_slide",
+          "backup_data_supporting_details_for_likely_questions",
+          "optional_asides_relevant_stories_industry_context"
+        ],
+        "five_second_test": {
+          "rule": "after_designing_glance_5_seconds",
+          "fail_too_complex": "≥ 5 seconds to grasp main message → simplify to one hero",
+          "fail_too_thin": "≤ 1 second instant grasp → too sparse, add caption or data",
+          "pass_window": "2_to_4_seconds"
+        }
+      },
+      "slide_deck_skeleton": {
+        "_v0_5_added": true,
+        "_purpose": "v0.4 playtest: JS transform:scale() + fixed 1920×1080 px caused viewport mismatch in Claude artifacts. CSS-only skeleton now mandatory.",
+        "forbidden": ["JS_fitStage_transform_scale", "fixed_1920x1080_px_dimensions", "translateY_manual_pagination"],
+        "required_approach": {
+          "viewport_fit": "CSS aspect-ratio:16/9 + container-type:inline-size + cqi units",
+          "pagination": "scroll-snap-type:y mandatory on wrapper, scroll-snap-align:start on each slide",
+          "internal_sizing": "all dimensions in cqi (1cqi = 1% of container inline-size), no fixed px"
+        },
+        "see_recipes": "aperture-recipes.md §R1"
+      }
+    },
+    "mobile": {
+      "max_viewport_px": 480,
+      "h1_to_body_ratio_min_relaxed": 3.5,
+      "bento_layout": "single_column_stack",
+      "min_whitespace_ratio_relaxed": 0.4,
+      "min_font_size_px_relaxed": 12,
+      "section_marker_degrade": "brand_meta_with_16px_gap_no_hairline"
+    }
+  },
+
+  "subsystem_combination_recipes": {
+    "b2b_saas_solarcomply": {
+      "primary": "default_deep + brand_spectrum:solar_energy",
+      "secondary": ["data_palette", "color_block"],
+      "color_block_brand_color": "#D9531A",
+      "recommended_signatures": ["signature_4_for_chapter", "signature_7_for_compliance_manifesto"]
+    },
+    "ai_product_marketing_site_english": {
+      "primary": "default_deep + brand_spectrum:tech_finance",
+      "secondary": ["light_paper", "color_block", "data_palette"],
+      "recommended_signatures": ["signature_2_for_concept", "signature_9_for_product_name"]
+    },
+    "chinese_cultural_institution": {
+      "primary": "japanese_editorial",
+      "secondary": ["color_block_traditional_palette", "light_paper + brand_spectrum:culture_art"],
+      "typography": "must_apply_cjk_typography_with_size_compensation",
+      "recommended_signatures": ["signature_2", "signature_4"]
+    },
+    "bilingual_quarterly_review_ppt": {
+      "primary": "default_deep + brand_spectrum:editorial_media",
+      "chapter_pages": "color_block",
+      "data_pages": "data_palette",
+      "summary_page": "light_paper",
+      "recommended_signatures": ["signature_4_chapter", "signature_10_for_bilingual_concept_page"]
+    }
+  }
+}

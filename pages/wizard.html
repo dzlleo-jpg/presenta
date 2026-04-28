@@ -8,305 +8,514 @@
   <script src="../scripts/data/models.js?v=202604201000" defer></script>
   <script src="../scripts/data/design-system/archetypes.js?v=202604221500" defer></script>
   <script src="../scripts/data/design-system/dna-constraints.js?v=202604221500" defer></script>
+  <script src="../scripts/data/design-system/aperture_tokens.js?v=202604271900" defer></script>
   <script src="../scripts/lib/skill_registry.js?v=202604221500" defer></script>
+  <script src="../scripts/lib/combo_registry.js?v=202604271900" defer></script>
   <script src="../scripts/lib/api_providers_skill.js?v=202604201155" defer></script>
   <script src="../scripts/lib/renderer_skill.js?v=202604201000" defer></script>
+  <script src="../scripts/lib/aperture_renderer_skill.js?v=202604271900" defer></script>
+  <script src="../scripts/lib/aperture_planner_skill.js?v=202604271900" defer></script>
   <script src="../scripts/lib/ai_service_integrated.js?v=202604201210" defer></script>
   <script src="../scripts/lib/generation_modal.js?v=202604211000" defer></script>
+  <link rel="stylesheet" href="../styles/buttons.css">
   <style>
     body {
-      background: #0a0e1a;
-      color: #f0f4ff;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       min-height: 100vh;
-      margin: 0;
+      background:
+        linear-gradient(90deg, rgba(24, 19, 16, 0.025) 1px, transparent 1px) 0 0 / 120px 120px,
+        var(--color-bg-base);
     }
+
     .page-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      gap: 16px;
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--color-border);
+      background: rgba(239, 235, 227, 0.9);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
+
     .page-header a {
-      color: rgba(255,255,255,0.5);
       text-decoration: none;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
-    .page-header a:hover { color: #fff; }
-    .logo-text { font-weight: 700; font-size: 18px; color: #fff; }
+
+    .page-brand {
+      display: grid;
+      gap: 4px;
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      color: var(--color-text-primary);
+    }
+
+    .brand-meta,
+    .page-back {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+
+    .page-back:hover {
+      color: var(--color-primary);
+    }
 
     .page-main {
-      max-width: 480px;
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 40px 24px 80px;
+      padding: 56px 28px 80px;
+      display: grid;
+      grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+      gap: clamp(28px, 5vw, 72px);
+      align-items: start;
     }
+
+    .wizard-overview {
+      position: sticky;
+      top: 108px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .page-kicker {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+
     .page-title {
-      font-size: 22px;
-      font-weight: 700;
-      margin: 0 0 4px;
+      font-size: clamp(2.4rem, 4vw, 4rem);
+      line-height: 0.96;
+      margin: 0;
+      color: var(--color-text-primary);
     }
+
     .page-subtitle {
-      font-size: 14px;
-      color: rgba(255,255,255,0.4);
-      margin: 0 0 32px;
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--color-text-secondary);
     }
-    .analysis-status {
-      font-size: 12px;
-      color: rgba(255,255,255,0.35);
-      margin: 0 0 32px;
+
+    .analysis-status,
+    .doc-panel {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 10px;
+      padding: 14px 16px;
+      border: 1px solid var(--color-border);
+      background: rgba(251, 247, 241, 0.78);
     }
+
+    .analysis-status {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+
     .analysis-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: #667eea;
-      animation: blink 1.5s ease-in-out infinite;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      animation: pulse 1.5s ease-in-out infinite;
     }
-    .analysis-dot.done { background: #4ade80; animation: none; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .analysis-dot.done {
+      background: var(--color-success);
+      animation: none;
+    }
+
+    .doc-panel {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .doc-panel-label {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+
+    .doc-info {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+
+    .wizard-form {
+      padding: 28px;
+      border: 1px solid var(--color-border-strong);
+      background: rgba(251, 247, 241, 0.92);
+      box-shadow: var(--shadow-md);
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 28px;
+    }
 
     .form-group {
-      margin-bottom: 24px;
-    }
-    .form-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 8px;
-      display: block;
+      display: grid;
+      gap: 12px;
     }
 
-    /* Tag selector */
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+
     .tag-options {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-    }
-    .tag-option {
-      padding: 8px 16px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.6);
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .tag-option:hover { border-color: rgba(255,255,255,0.2); color: #fff; }
-    .tag-option.active {
-      border-color: #667eea;
-      background: rgba(102,126,234,0.15);
-      color: #fff;
+      gap: 10px;
     }
 
-    /* Mood cards */
+    .tag-option {
+      padding: 10px 14px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-surface);
+      color: var(--color-text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+    }
+
+    .tag-option:hover,
+    .tag-option.active {
+      border-color: var(--color-text-primary);
+      color: var(--color-text-primary);
+      background: rgba(164, 64, 47, 0.04);
+    }
+
     .mood-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
     }
+
     .mood-card {
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-surface);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: border-color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
       position: relative;
       overflow: hidden;
     }
-    .mood-card:hover { border-color: rgba(255,255,255,0.2); }
-    .mood-card.active {
-      border-color: #667eea;
-      background: rgba(102,126,234,0.12);
-    }
-    .mood-name {
-      font-size: 14px;
-      font-weight: 500;
-      color: #fff;
-      margin-bottom: 2px;
-    }
-    .mood-desc {
-      font-size: 12px;
-      color: rgba(255,255,255,0.4);
-    }
-    .mood-swatch {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      display: flex;
-    }
-    .mood-swatch span { flex: 1; }
 
-    /* Slider */
-    .slider-row {
-      display: flex;
-      align-items: center;
+    .mood-card:hover,
+    .mood-card.active {
+      border-color: var(--color-text-primary);
+      background: rgba(164, 64, 47, 0.04);
+      transform: translateY(-1px);
+    }
+
+    /* ── Combo 选择器 ── */
+    .combo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
     }
-    .slider-row input[type="range"] {
-      flex: 1;
-      -webkit-appearance: none;
-      height: 4px;
-      border-radius: 2px;
-      background: rgba(255,255,255,0.1);
-      outline: none;
-    }
-    .slider-row input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      background: #667eea;
+
+    .combo-card {
+      display: grid;
+      gap: 6px;
+      padding: 16px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-surface);
       cursor: pointer;
-    }
-    .slider-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: #667eea;
-      min-width: 36px;
-      text-align: right;
-      font-variant-numeric: tabular-nums;
+      transition: border-color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
     }
 
-    /* Text input */
+    .combo-card:hover,
+    .combo-card.active {
+      border-color: var(--color-text-primary);
+      background: rgba(164, 64, 47, 0.04);
+      transform: translateY(-1px);
+    }
+
+    .combo-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+
+    .combo-desc {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+    }
+
+    .combo-badge {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-muted);
+      width: fit-content;
+    }
+
+    .mood-name {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--color-text-primary);
+    }
+
+    .mood-desc {
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    .mood-swatch {
+      display: flex;
+      height: 5px;
+      margin-top: 4px;
+    }
+
+    .mood-swatch span {
+      flex: 1;
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .slider-row input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      background: rgba(24, 19, 16, 0.12);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .slider-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      border: 3px solid var(--color-bg-elevated);
+      box-shadow: 0 0 0 1px var(--color-primary);
+    }
+
+    .slider-value {
+      min-width: 38px;
+      text-align: right;
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      line-height: 1;
+      color: var(--color-primary);
+    }
+
     .text-input {
       width: 100%;
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04);
-      color: #fff;
+      padding: 14px 16px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-surface);
+      color: var(--color-text-primary);
       font-size: 14px;
       font-family: inherit;
       box-sizing: border-box;
     }
-    .text-input:focus { outline: none; border-color: #667eea; }
-    .text-input::placeholder { color: rgba(255,255,255,0.25); }
 
-    /* Generate button */
+    .text-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+
+    .text-input::placeholder {
+      color: var(--color-text-muted);
+    }
+
     .generate-btn {
       width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 12px;
-    }
-    .generate-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(102,126,234,0.3);
-    }
-    .generate-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-      background: rgba(102,126,234,0.4);
+      margin-top: 8px;
     }
 
-    .doc-info {
-      font-size: 12px;
-      color: rgba(255,255,255,0.3);
-      margin-top: 24px;
-      text-align: center;
+    @media (max-width: 960px) {
+      .page-main {
+        grid-template-columns: 1fr;
+      }
+
+      .wizard-overview {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-header,
+      .page-main {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .mood-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wizard-form {
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
   <header class="page-header">
-    <a href="../index.html">
-      <span class="logo-text">Presenta</span>
+    <a href="../index.html" class="page-brand">
+      <span class="brand-name">Presenta</span>
+      <span class="brand-meta">A · Swiss Editorial</span>
     </a>
+    <a href="../index.html" class="page-back">Back to Upload</a>
   </header>
 
   <main class="page-main" id="pageMain" style="opacity:0;transition:opacity 0.3s">
-    <h1 class="page-title">设置演示偏好</h1>
-    <p class="page-subtitle">调整后点击生成，AI 将为你创建完整幻灯片</p>
+    <section class="wizard-overview">
+      <span class="page-kicker">Setup</span>
+      <h1 class="page-title">在生成前，先确定这份 deck 的编辑视角。</h1>
+      <p class="page-subtitle">四个手势就够了：受众、视觉风格、页数和标题。结构会更稳，后续编辑也更省力。</p>
 
-    <div class="analysis-status" id="analysisStatus">
-      <span class="analysis-dot" id="analysisDot"></span>
-      <span id="analysisText">正在加载…</span>
-    </div>
-
-    <!-- 受众 -->
-    <div class="form-group">
-      <label class="form-label">目标受众</label>
-      <div class="tag-options" id="audienceOptions">
-        <div class="tag-option" data-value="高管决策层">高管决策层</div>
-        <div class="tag-option" data-value="投资人">投资人</div>
-        <div class="tag-option" data-value="内部团队">内部团队</div>
-        <div class="tag-option" data-value="客户">客户</div>
-        <div class="tag-option" data-value="技术人员">技术人员</div>
+      <div class="analysis-status" id="analysisStatus">
+        <span class="analysis-dot" id="analysisDot"></span>
+        <span id="analysisText">正在加载…</span>
       </div>
-    </div>
 
-    <!-- 视觉风格 -->
-    <div class="form-group">
-      <label class="form-label">视觉风格</label>
-      <div class="mood-grid" id="moodOptions">
-        <div class="mood-card" data-value="editorial-swiss">
-          <div class="mood-name">瑞士编辑风</div>
-          <div class="mood-desc">精准数据，权威感</div>
-          <div class="mood-swatch"><span style="background:#FFFFFF"></span><span style="background:#0A0A0B"></span><span style="background:#003366"></span><span style="background:#D9D7D0"></span></div>
-        </div>
-        <div class="mood-card" data-value="magazine-big-type">
-          <div class="mood-name">杂志大字风</div>
-          <div class="mood-desc">大胆表达，品牌力</div>
-          <div class="mood-swatch"><span style="background:#F5F3EE"></span><span style="background:#1A1815"></span><span style="background:#E63946"></span><span style="background:#C8C4BA"></span></div>
-        </div>
-        <div class="mood-card" data-value="minimal-architectural">
-          <div class="mood-name">极简建筑风</div>
-          <div class="mood-desc">留白奢华，克制美</div>
-          <div class="mood-swatch"><span style="background:#FAFAF7"></span><span style="background:#1A1815"></span><span style="background:#2A2A2C"></span><span style="background:#E0DED6"></span></div>
-        </div>
-        <div class="mood-card" data-value="moodboard-collage">
-          <div class="mood-name">情绪拼贴风</div>
-          <div class="mood-desc">温暖质感，手作感</div>
-          <div class="mood-swatch"><span style="background:#F2EDE3"></span><span style="background:#2A1F14"></span><span style="background:#8B3A2E"></span><span style="background:#C8B89C"></span></div>
-        </div>
-        <div class="mood-card" data-value="luxury-editorial">
-          <div class="mood-name">奢品编辑风</div>
-          <div class="mood-desc">静奢美学，精致感</div>
-          <div class="mood-swatch"><span style="background:#F8F5EE"></span><span style="background:#1A1612"></span><span style="background:#9B7A3E"></span><span style="background:#D6CFC0"></span></div>
-        </div>
-        <div class="mood-card" data-value="tech-dark-mode">
-          <div class="mood-name">科技暗黑风</div>
-          <div class="mood-desc">深色画布，未来感</div>
-          <div class="mood-swatch"><span style="background:#0A0A0B"></span><span style="background:#F5F3EE"></span><span style="background:#D4FF3A"></span><span style="background:#2A2A2C"></span></div>
-        </div>
+      <div class="doc-panel">
+        <span class="doc-panel-label">Document</span>
+        <div class="doc-info" id="docInfo"></div>
       </div>
-    </div>
+    </section>
 
-    <!-- 页数 -->
-    <div class="form-group">
-      <label class="form-label">页数</label>
-      <div class="slider-row">
-        <input type="range" id="pageSlider" min="6" max="24" value="12" step="1">
-        <span class="slider-value" id="pageValue">12</span>
+    <section class="wizard-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">设计引擎</label>
+          <div class="combo-grid" id="comboOptions">
+            <div class="combo-card active" data-value="classic">
+              <div class="combo-name">Classic</div>
+              <div class="combo-desc">6 种风格原型，经典渲染引擎</div>
+              <span class="combo-badge">Default</span>
+            </div>
+            <div class="combo-card" data-value="aperture">
+              <div class="combo-name">Aperture</div>
+              <div class="combo-desc">静默剧场 × 精密信息 · Stage/Info 双区模型</div>
+              <span class="combo-badge">DNA</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">目标受众</label>
+          <div class="tag-options" id="audienceOptions">
+            <div class="tag-option" data-value="高管决策层">高管决策层</div>
+            <div class="tag-option" data-value="投资人">投资人</div>
+            <div class="tag-option" data-value="内部团队">内部团队</div>
+            <div class="tag-option" data-value="客户">客户</div>
+            <div class="tag-option" data-value="技术人员">技术人员</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">视觉风格</label>
+          <div class="mood-grid" id="moodOptions">
+            <div class="mood-card" data-value="editorial-swiss">
+              <div class="mood-name">瑞士编辑风</div>
+              <div class="mood-desc">精准、克制、适合数据与观点表达</div>
+              <div class="mood-swatch"><span style="background:#f7f2ea"></span><span style="background:#181310"></span><span style="background:#a4402f"></span><span style="background:#cfc5b8"></span></div>
+            </div>
+            <div class="mood-card" data-value="magazine-big-type">
+              <div class="mood-name">杂志大字风</div>
+              <div class="mood-desc">更强的标题冲击和品牌表达</div>
+              <div class="mood-swatch"><span style="background:#f5f1e9"></span><span style="background:#171310"></span><span style="background:#bf3c28"></span><span style="background:#d8cec1"></span></div>
+            </div>
+            <div class="mood-card" data-value="minimal-architectural">
+              <div class="mood-name">极简建筑风</div>
+              <div class="mood-desc">留白更大，节奏更静，更像展板</div>
+              <div class="mood-swatch"><span style="background:#faf7f1"></span><span style="background:#1e1714"></span><span style="background:#665b52"></span><span style="background:#e2d9cd"></span></div>
+            </div>
+            <div class="mood-card" data-value="moodboard-collage">
+              <div class="mood-name">情绪拼贴风</div>
+              <div class="mood-desc">更温暖，更适合内容叙事与案例页</div>
+              <div class="mood-swatch"><span style="background:#f1e9dd"></span><span style="background:#2a201a"></span><span style="background:#98513c"></span><span style="background:#c8b49c"></span></div>
+            </div>
+            <div class="mood-card" data-value="luxury-editorial">
+              <div class="mood-name">奢品编辑风</div>
+              <div class="mood-desc">更安静的质感与高级留白</div>
+              <div class="mood-swatch"><span style="background:#f8f5ef"></span><span style="background:#17130f"></span><span style="background:#8d6b3b"></span><span style="background:#dad1c3"></span></div>
+            </div>
+            <div class="mood-card" data-value="tech-dark-mode">
+              <div class="mood-name">科技暗黑风</div>
+              <div class="mood-desc">适合 AI / 数据 / 基础设施类表达</div>
+              <div class="mood-swatch"><span style="background:#0c0a09"></span><span style="background:#f3eee6"></span><span style="background:#c7ff4f"></span><span style="background:#46403a"></span></div>
+            </div>
+          </div>
+          <div class="mood-grid" id="apertureMoodOptions" style="display:none">
+            <div class="mood-card" data-value="default_deep">
+              <div class="mood-name">Default Deep</div>
+              <div class="mood-desc">深色基底 · 铜色点缀 · 科技与金融</div>
+              <div class="mood-swatch"><span style="background:#0A0A0A"></span><span style="background:#131313"></span><span style="background:#B87333"></span><span style="background:#6E6F73"></span></div>
+            </div>
+            <div class="mood-card" data-value="deep_petrol">
+              <div class="mood-name">Deep Petrol</div>
+              <div class="mood-desc">深海蓝绿 · 环保与可持续</div>
+              <div class="mood-swatch"><span style="background:#0B1215"></span><span style="background:#111D22"></span><span style="background:#2A9D8F"></span><span style="background:#6B7C85"></span></div>
+            </div>
+            <div class="mood-card" data-value="light_paper">
+              <div class="mood-name">Light Paper</div>
+              <div class="mood-desc">暖纸色 · 学术与咨询</div>
+              <div class="mood-swatch"><span style="background:#F5F1E8"></span><span style="background:#FAF7F0"></span><span style="background:#8B5E3C"></span><span style="background:#6B6560"></span></div>
+            </div>
+            <div class="mood-card" data-value="color_block">
+              <div class="mood-name">Color Block</div>
+              <div class="mood-desc">色块构图 · 品牌与创意</div>
+              <div class="mood-swatch"><span style="background:#1A1A2E"></span><span style="background:#16213E"></span><span style="background:#E94560"></span><span style="background:#8A8A9A"></span></div>
+            </div>
+            <div class="mood-card" data-value="japanese_editorial">
+              <div class="mood-name">Japanese Editorial</div>
+              <div class="mood-desc">間 · 极致留白 · 文化与高端</div>
+              <div class="mood-swatch"><span style="background:#F8F5F0"></span><span style="background:#1A1A1A"></span><span style="background:#C23B22"></span><span style="background:#D4CFC7"></span></div>
+            </div>
+            <div class="mood-card" data-value="data_palette">
+              <div class="mood-name">Data Palette</div>
+              <div class="mood-desc">数据可视化优先 · 仪表盘与报告</div>
+              <div class="mood-swatch"><span style="background:#0D1117"></span><span style="background:#161B22"></span><span style="background:#58A6FF"></span><span style="background:#8B949E"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">页数</label>
+          <div class="slider-row">
+            <input type="range" id="pageSlider" min="6" max="24" value="12" step="1">
+            <span class="slider-value" id="pageValue">12</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">标题（可选）</label>
+          <input type="text" class="text-input" id="titleInput" placeholder="留空则由 AI 自动生成">
+        </div>
+
+        <button class="btn btn-accent btn-lg generate-btn" id="generateBtn">生成演示文稿</button>
       </div>
-    </div>
-
-    <!-- 标题 -->
-    <div class="form-group">
-      <label class="form-label">标题（可选）</label>
-      <input type="text" class="text-input" id="titleInput" placeholder="留空则由 AI 自动生成">
-    </div>
-
-    <button class="generate-btn" id="generateBtn">生成演示文稿</button>
-
-    <div class="doc-info" id="docInfo"></div>
+    </section>
   </main>
 
   <script src="../scripts/components/wizard_skill.js?v=202604211000" defer></script>

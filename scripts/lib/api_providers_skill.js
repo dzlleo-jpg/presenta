@@ -14,7 +14,7 @@ const APIProvidersSkill = {
     name: 'Mock AI (Skill Mode)',
 
     async generatePlanning(documentContent, wizardAnswers, options = {}) {
-      const { onProgress, onComplete } = options;
+      const { onProgress, onComplete, promptOverride } = options;
       const steps = 15;
 
       // 模拟逐阶段生成
@@ -42,8 +42,11 @@ const APIProvidersSkill = {
         }
       }
 
-      // 生成示例 planning.yaml
-      const planningYaml = this.buildMockPlanning(documentContent, wizardAnswers);
+      // 生成示例 planning.yaml（根据 combo 选择格式）
+      const isAperture = wizardAnswers?.combo === 'aperture' || !!promptOverride;
+      const planningYaml = isAperture
+        ? this.buildApertureMockPlanning(documentContent, wizardAnswers)
+        : this.buildMockPlanning(documentContent, wizardAnswers);
 
       if (onComplete) onComplete({ planningYaml });
       return planningYaml;
@@ -473,6 +476,179 @@ const APIProvidersSkill = {
       return lines.join('\n');
     },
 
+    buildApertureMockPlanning(content, answers) {
+      const title = answers.title || '融资路演演示文稿';
+      const audience = answers.audience || '投资人';
+      const pageCount = Math.max(5, Math.min(parseInt(answers.pageCount, 10) || 12, 20));
+      const subsystem = answers.mood || 'default_deep';
+
+      const subsystemReasonMap = {
+        default_deep: '科技/金融项目，深色基底传递专业感',
+        deep_petrol: '环保/可持续主题，蓝绿色调传递信任',
+        light_paper: '学术/咨询场景，暖纸色传递温度',
+        color_block: '品牌/创意项目，色块构图传递活力',
+        japanese_editorial: '文化/高端场景，极致留白传递品质',
+        data_palette: '数据密集型报告，信息可视化优先'
+      };
+
+      const yaml = [
+        'schema_version: "aperture-1.0"',
+        `title: ${this.yamlQuote(title)}`,
+        `audience: ${this.yamlQuote(audience)}`,
+        `page_count: ${pageCount}`,
+        'narrative_framework: "E"',
+        `framework_reason: ${this.yamlQuote('故事驱动，建立情感连接')}`,
+        `core_thesis: ${this.yamlQuote('我们不是在卖产品，而是在创造一个新的市场品类')}`,
+        '',
+        `subsystem: "${subsystem}"`,
+        `subsystem_reason: ${this.yamlQuote(subsystemReasonMap[subsystem] || '默认深色')}`,
+        'variance_dial: 2',
+        `global_mood: ${this.yamlQuote('克制而精密，数据驱动的叙事')}`,
+        '',
+        'chapters:',
+        `  - name: ${this.yamlQuote('开场')}`,
+        '    slides:',
+        `      - page_role: "cover"`,
+        `        title: ${this.yamlQuote(title)}`,
+        `        page_intent: "建立第一印象"`,
+        '        director_note: |',
+        '          【情绪定调】全篇起点，高对比度+大留白',
+        '          【视觉主角】品牌名，字号≥96px',
+        '          【空间分配】Stage 70% / Info 30%',
+        '        sidebar: ""',
+        '        insight: ""',
+        '        stage_zone:',
+        '          content_type: "hero-text"',
+        `          hero_text: ${this.yamlQuote(title)}`,
+        '          scale: "full"',
+        '        info_zone:',
+        '          layout: "single"',
+        '          items_count: 1',
+        '        imagery:',
+        '          role: "atmospheric"',
+        '          scale: "full-bleed"',
+        '          content_brief: "抽象科技纹理"',
+        '        items:',
+        `          - ${this.yamlQuote('重新定义' + (title.slice(0, 6) || '行业') + '的增长逻辑')}`,
+        '',
+        `  - name: ${this.yamlQuote('市场分析')}`,
+        '    slides:',
+        '      - page_role: "support"',
+        `        title: ${this.yamlQuote('市场规模达千亿级')}`,
+        '        page_intent: "用数据建立可信度"',
+        '        director_note: |',
+        '          【情绪定调】支撑页，信息密度中等',
+        '          【视觉主角】千亿级数字，≥96px',
+        '          【空间分配】Stage 50% / Info 50%',
+        '        sidebar: "数据来源：艾瑞咨询，2024"',
+        '        insight: "年复合增长率25%"',
+        '        stage_zone:',
+        '          content_type: "hero-number"',
+        '          hero_text: "1200亿"',
+        '          scale: "compact"',
+        '        info_zone:',
+        '          layout: "bento-2x2"',
+        '          items_count: 3',
+        '        imagery:',
+        '          role: "none"',
+        '          scale: "none"',
+        '          content_brief: ""',
+        '        items:',
+        '          - "**1200亿** | 市场规模 | 2024年整体规模"',
+        '          - "**25%** | 年复合增长率 | 未来五年预测"',
+        '          - "**Top3** | 市场集中度 | 头部效应明显"',
+        '        chart:',
+        '          chart_type: "line"',
+        '          data:',
+        '            type: "line"',
+        '            labels: ["2020", "2021", "2022", "2023", "2024"]',
+        '            datasets:',
+        '              - label: "市场规模（亿元）"',
+        '                data: [500, 680, 850, 1020, 1200]',
+        '            source: "艾瑞咨询，2024"',
+        '',
+        '      - page_role: "climax"',
+        `        title: ${this.yamlQuote('结构性拐点已出现')}`,
+        '        page_intent: "全篇情绪最高点"',
+        '        director_note: |',
+        '          【情绪定调】高潮，大留白+高对比度',
+        '          【视觉主角】40%，字号≥140px',
+        '          【空间分配】Stage 70% / Info 30%',
+        '        sidebar: ""',
+        '        insight: "渗透率突破临界点"',
+        '        stage_zone:',
+        '          content_type: "hero-number"',
+        '          hero_text: "40%"',
+        '          scale: "full"',
+        '        info_zone:',
+        '          layout: "bento-2x1"',
+        '          items_count: 2',
+        '        imagery:',
+        '          role: "none"',
+        '          scale: "none"',
+        '          content_brief: ""',
+        '        items:',
+        '          - "**40%** | 市场渗透率 | 历史性突破"',
+        '          - "**2倍** | 增速对比 | vs 行业平均"',
+        '',
+        `  - name: ${this.yamlQuote('解决方案')}`,
+        '    slides:',
+        '      - page_role: "support"',
+        `        title: ${this.yamlQuote('差异化定位：效率提升3倍')}`,
+        '        page_intent: "展示核心产品价值"',
+        '        director_note: |',
+        '          【情绪定调】支撑页，用对比建立优势感',
+        '          【视觉主角】3倍效率提升',
+        '          【空间分配】Stage 40% / Info 60%',
+        '        sidebar: "基于1024份用户调研"',
+        '        insight: "不是功能堆砌，是体验重构"',
+        '        stage_zone:',
+        '          content_type: "hero-text"',
+        '          hero_text: "3×"',
+        '          scale: "compact"',
+        '        info_zone:',
+        '          layout: "bento-1x3"',
+        '          items_count: 3',
+        '        imagery:',
+        '          role: "none"',
+        '          scale: "none"',
+        '          content_brief: ""',
+        '        items:',
+        '          - "传统方案：平均耗时8小时"',
+        '          - "我们的方案：平均耗时2.5小时"',
+        '          - "效率提升：**3倍**"',
+        '',
+        `  - name: ${this.yamlQuote('总结')}`,
+        '    slides:',
+        '      - page_role: "closing"',
+        `        title: ${this.yamlQuote('一起创造新品类')}`,
+        '        page_intent: "强化核心论点，留下行动号召"',
+        '        director_note: |',
+        '          【情绪定调】结尾，回归品牌色',
+        '          【视觉主角】结语，字号≥56px',
+        '          【空间分配】Stage 60% / Info 40%',
+        '        sidebar: ""',
+        '        insight: "期待与您合作"',
+        '        stage_zone:',
+        '          content_type: "hero-text"',
+        '          hero_text: "一起创造新品类"',
+        '          scale: "full"',
+        '        info_zone:',
+        '          layout: "stack"',
+        '          items_count: 3',
+        '        imagery:',
+        '          role: "atmospheric"',
+        '          scale: "full-bleed"',
+        '          content_brief: "品牌色渐变"',
+        '        items:',
+        '          - "市场窗口期：12-18个月"',
+        '          - "团队已验证商业模式"',
+        '          - "寻求战略投资加速扩张"'
+      ];
+
+      return yaml.join('\n');
+    },
+
     formatMockPlanning({ title, audience, pageCount, mood, preset, chapters, transitions }) {
       const yaml = [
         'schema_version: "2.0"',
@@ -520,14 +696,14 @@ const APIProvidersSkill = {
     name: 'OpenAI GPT-4o',
 
     async generatePlanning(documentContent, wizardAnswers, options = {}) {
-      const { apiKey, model = 'gpt-4o', onProgress, onComplete, signal } = options;
+      const { apiKey, model = 'gpt-4o', onProgress, onComplete, signal, promptOverride } = options;
 
       if (!apiKey) {
         throw new Error('OPENAI_API_KEY 未设置，请在设置中配置。');
       }
 
-      // 构建系统提示词（Planner Skill）
-      const systemPrompt = this.buildSystemPrompt();
+      // combo 路由：promptOverride 存在时替换默认 system prompt
+      const systemPrompt = promptOverride || this.buildSystemPrompt();
       const userPrompt = this.buildUserPrompt(documentContent, wizardAnswers);
 
       try {
@@ -691,11 +867,11 @@ ${scenario ? `- 叙事框架偏好：${scenario}` : ''}${imageryHint}
     name: 'Anthropic Claude',
 
     async generatePlanning(documentContent, wizardAnswers, options = {}) {
-      const { apiKey, model = 'claude-sonnet-4-20250514', onProgress, onComplete, signal } = options;
+      const { apiKey, model = 'claude-sonnet-4-20250514', onProgress, onComplete, signal, promptOverride } = options;
 
       if (!apiKey) throw new Error('Anthropic API Key 未设置，请在设置中配置。');
 
-      const systemPrompt = APIProvidersSkill.openai.buildSystemPrompt();
+      const systemPrompt = promptOverride || APIProvidersSkill.openai.buildSystemPrompt();
       const userPrompt = APIProvidersSkill.openai.buildUserPrompt(documentContent, wizardAnswers);
 
       try {
@@ -798,13 +974,13 @@ ${scenario ? `- 叙事框架偏好：${scenario}` : ''}${imageryHint}
     name: 'DeepSeek',
 
     async generatePlanning(documentContent, wizardAnswers, options = {}) {
-      const { apiKey, model = 'deepseek-chat', onProgress, onComplete, signal } = options;
+      const { apiKey, model = 'deepseek-chat', onProgress, onComplete, signal, promptOverride } = options;
 
       if (!apiKey) {
         throw new Error('请在设置中配置 DeepSeek API Key');
       }
 
-      const systemPrompt = APIProvidersSkill.openai.buildSystemPrompt();
+      const systemPrompt = promptOverride || APIProvidersSkill.openai.buildSystemPrompt();
       const userPrompt = APIProvidersSkill.openai.buildUserPrompt(documentContent, wizardAnswers);
 
       try {
@@ -869,13 +1045,13 @@ ${scenario ? `- 叙事框架偏好：${scenario}` : ''}${imageryHint}
     name: 'SiliconFlow (DeepSeek)',
 
     async generatePlanning(documentContent, wizardAnswers, options = {}) {
-      const { apiKey, model = 'deepseek-ai/DeepSeek-V3', onProgress, onComplete, signal } = options;
+      const { apiKey, model = 'deepseek-ai/DeepSeek-V3', onProgress, onComplete, signal, promptOverride } = options;
 
       if (!apiKey) {
         throw new Error('请在设置中配置 SiliconFlow API Key');
       }
 
-      const systemPrompt = APIProvidersSkill.openai.buildSystemPrompt();
+      const systemPrompt = promptOverride || APIProvidersSkill.openai.buildSystemPrompt();
       const userPrompt = APIProvidersSkill.openai.buildUserPrompt(documentContent, wizardAnswers);
 
       try {
@@ -935,14 +1111,13 @@ ${scenario ? `- 叙事框架偏好：${scenario}` : ''}${imageryHint}
     name: 'MiniMax',
 
     async generatePlanning(documentContent, wizardAnswers, options = {}) {
-      const { apiKey, model = 'MiniMax-Text-01', onProgress, onComplete, signal } = options;
+      const { apiKey, model = 'MiniMax-Text-01', onProgress, onComplete, signal, promptOverride } = options;
 
       if (!apiKey) {
         throw new Error('MiniMax API Key 未设置，请在设置中配置。');
       }
 
-      // 使用与 OpenAI 相同的 prompt 构建逻辑
-      const systemPrompt = APIProvidersSkill.openai.buildSystemPrompt();
+      const systemPrompt = promptOverride || APIProvidersSkill.openai.buildSystemPrompt();
       const userPrompt = APIProvidersSkill.openai.buildUserPrompt(documentContent, wizardAnswers);
 
       try {

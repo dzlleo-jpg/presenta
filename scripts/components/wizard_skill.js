@@ -50,13 +50,22 @@
     const main = document.getElementById('pageMain');
     if (main) {
       main.innerHTML = '<div style="text-align:center;padding:80px 20px">' +
-        '<p style="color:rgba(255,255,255,0.5);margin-bottom:20px">' + msg + '</p>' +
-        '<a href="../index.html" style="color:#667eea;text-decoration:none">返回首页上传文档</a></div>';
+        '<p style="color:var(--color-text-muted);margin-bottom:20px">' + msg + '</p>' +
+        '<a href="../index.html" style="color:var(--color-primary);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:2px">返回首页上传文档</a></div>';
       main.style.opacity = '1';
     }
   }
 
   function bindUI() {
+    // ── Combo 选择器 ──
+    document.querySelectorAll('#comboOptions .combo-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('#comboOptions .combo-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        switchMoodGrid(card.dataset.value);
+      });
+    });
+
     document.querySelectorAll('#audienceOptions .tag-option').forEach(tag => {
       tag.addEventListener('click', () => {
         document.querySelectorAll('#audienceOptions .tag-option').forEach(t => t.classList.remove('active'));
@@ -67,6 +76,13 @@
     document.querySelectorAll('#moodOptions .mood-card').forEach(card => {
       card.addEventListener('click', () => {
         document.querySelectorAll('#moodOptions .mood-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('#apertureMoodOptions .mood-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('#apertureMoodOptions .mood-card').forEach(c => c.classList.remove('active'));
         card.classList.add('active');
       });
     });
@@ -170,14 +186,44 @@
     }
   }
 
+  function switchMoodGrid(comboId) {
+    const classicGrid = document.getElementById('moodOptions');
+    const apertureGrid = document.getElementById('apertureMoodOptions');
+    if (!classicGrid || !apertureGrid) return;
+
+    if (comboId === 'aperture') {
+      classicGrid.style.display = 'none';
+      apertureGrid.style.display = '';
+      if (!apertureGrid.querySelector('.mood-card.active')) {
+        const first = apertureGrid.querySelector('.mood-card');
+        if (first) first.classList.add('active');
+      }
+    } else {
+      classicGrid.style.display = '';
+      apertureGrid.style.display = 'none';
+      if (!classicGrid.querySelector('.mood-card.active')) {
+        const first = classicGrid.querySelector('.mood-card');
+        if (first) first.classList.add('active');
+      }
+    }
+  }
+
   function collectAnswers() {
+    const combo = document.querySelector('#comboOptions .combo-card.active')?.dataset.value || 'classic';
     const audience = document.querySelector('#audienceOptions .tag-option.active')?.dataset.value || '';
-    const mood = document.querySelector('#moodOptions .mood-card.active')?.dataset.value || '';
+
+    let mood = '';
+    if (combo === 'aperture') {
+      mood = document.querySelector('#apertureMoodOptions .mood-card.active')?.dataset.value || 'default_deep';
+    } else {
+      mood = document.querySelector('#moodOptions .mood-card.active')?.dataset.value || '';
+    }
+
     const pageCount = parseInt(document.getElementById('pageSlider')?.value || '12');
     const title = document.getElementById('titleInput')?.value?.trim() || '';
     const scenario = project?.analysis?.recommendedScenario || '';
 
-    return { audience, mood, pageCount, title, scenario };
+    return { combo, audience, mood, pageCount, title, scenario };
   }
 
   async function startGeneration() {

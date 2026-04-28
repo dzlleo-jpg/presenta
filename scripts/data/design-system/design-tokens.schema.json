@@ -1,0 +1,443 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Design Tokens v1.2",
+  "description": "Output schema for Aesthetic Design System Skill v1.2. Every field must be filled unless marked optional.",
+  "type": "object",
+  "required": ["meta", "color", "typography", "spacing", "grid", "radius", "shadow", "imagery", "imagery_decision", "per_slide_plan"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["project", "archetype", "rationale", "deliverable_type", "generated_at"],
+      "properties": {
+        "project": { "type": "string" },
+        "archetype": {
+          "type": "string",
+          "enum": [
+            "editorial-swiss",
+            "magazine-big-type",
+            "minimal-architectural",
+            "moodboard-collage",
+            "luxury-editorial",
+            "tech-dark-mode"
+          ]
+        },
+        "rationale": { "type": "string", "description": "One sentence explaining archetype choice." },
+        "deliverable_type": {
+          "type": "string",
+          "enum": ["slides", "web", "app", "mixed"]
+        },
+        "tonality_keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 3,
+          "maxItems": 5
+        },
+        "content_density": {
+          "type": "string",
+          "enum": ["data-heavy", "narrative-led", "visual-led", "concept-driven"]
+        },
+        "generated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "color": {
+      "type": "object",
+      "required": ["neutral", "accent", "temperature", "mode"],
+      "properties": {
+        "neutral": {
+          "type": "object",
+          "required": ["bg", "surface", "text", "text_muted", "hairline"],
+          "properties": {
+            "bg": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+            "surface": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+            "text": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+            "text_muted": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+            "hairline": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+          }
+        },
+        "accent": {
+          "type": "object",
+          "required": ["primary"],
+          "properties": {
+            "primary": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+            "secondary": { "type": ["string", "null"], "pattern": "^#[0-9A-Fa-f]{6}$" }
+          }
+        },
+        "support": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+          "maxItems": 3
+        },
+        "temperature": { "type": "string", "enum": ["warm", "cool", "neutral"] },
+        "mode": { "type": "string", "enum": ["light", "dark", "duotone"] },
+        "body_contrast_ratio": { "type": "number", "minimum": 7.0 }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "required": ["families", "scale"],
+      "properties": {
+        "families": {
+          "type": "object",
+          "required": ["heading", "body"],
+          "properties": {
+            "heading": {
+              "type": "object",
+              "required": ["stack", "category"],
+              "properties": {
+                "stack": { "type": "string", "description": "Full CSS font-family stack" },
+                "category": {
+                  "type": "string",
+                  "enum": ["editorial-serif", "neo-grotesk", "display", "humanist-serif", "didone", "mono"]
+                }
+              }
+            },
+            "body": {
+              "type": "object",
+              "required": ["stack"],
+              "properties": {
+                "stack": { "type": "string" },
+                "category": { "type": "string" }
+              }
+            },
+            "mono": {
+              "type": ["object", "null"],
+              "properties": {
+                "stack": { "type": "string" }
+              }
+            }
+          }
+        },
+        "scale": {
+          "type": "object",
+          "required": ["display", "h1", "body", "label"],
+          "properties": {
+            "display": {
+              "type": "object",
+              "required": ["size_px", "weight", "line_height", "tracking"],
+              "properties": {
+                "size_px": { "type": "number", "minimum": 72 },
+                "weight": { "type": "integer", "minimum": 100, "maximum": 900 },
+                "line_height": { "type": "number", "minimum": 0.9, "maximum": 1.2 },
+                "tracking": { "type": "number", "maximum": -0.01, "minimum": -0.03 }
+              }
+            },
+            "h1": {
+              "type": "object",
+              "required": ["size_px", "weight", "line_height", "tracking"]
+            },
+            "body": {
+              "type": "object",
+              "required": ["size_px", "weight", "line_height"],
+              "properties": {
+                "size_px": { "type": "number", "minimum": 14, "maximum": 20 },
+                "line_height": { "type": "number", "minimum": 1.3, "maximum": 1.7 }
+              }
+            },
+            "label": {
+              "type": "object",
+              "required": ["size_px", "weight", "tracking", "uppercase"],
+              "properties": {
+                "uppercase": { "type": "boolean" },
+                "tracking": { "type": "number", "minimum": 0.04, "maximum": 0.08 }
+              }
+            }
+          }
+        },
+        "h_b_ratio_measured": { "type": "number", "minimum": 2.5 },
+        "weight_span_measured": { "type": "integer", "minimum": 400 }
+      }
+    },
+    "spacing": {
+      "type": "object",
+      "required": ["base_unit", "scale"],
+      "properties": {
+        "base_unit": { "type": "integer", "enum": [4, 8] },
+        "scale": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "minItems": 6
+        }
+      }
+    },
+    "grid": {
+      "type": "object",
+      "required": ["columns", "gutter", "margin", "canvas"],
+      "properties": {
+        "columns": { "type": "integer", "enum": [6, 8, 12, 16] },
+        "gutter": { "type": "integer" },
+        "margin": { "type": "integer" },
+        "canvas": {
+          "type": "object",
+          "properties": {
+            "width": { "type": "integer" },
+            "height": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "radius": {
+      "type": "object",
+      "description": "Max 2 distinct values (S2)",
+      "properties": {
+        "none": { "type": "integer", "const": 0 },
+        "md": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "shadow": {
+      "type": ["string", "object"],
+      "description": "Either 'none' (preferred) or single elevation definition (S3)"
+    },
+    "iconography": {
+      "type": ["object", "null"],
+      "properties": {
+        "style": { "type": "string", "enum": ["outline", "filled"] },
+        "stroke_width": { "type": "number" },
+        "corner_style": { "type": "string", "enum": ["round", "square"] },
+        "metaphor_family": { "type": "string" }
+      }
+    },
+    "accent_devices": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "giant-number",
+          "page-label-header",
+          "hairline-divider",
+          "outline-frame",
+          "color-transition-page",
+          "oversized-caption",
+          "handwritten-signature"
+        ]
+      },
+      "maxItems": 3
+    },
+    "imagery_decision": {
+      "type": "object",
+      "description": "Step 2.5 answers, mandatory (v1.2)",
+      "required": ["q1_narrative", "q2_source", "q3_language", "q4_tonal", "q5_ratios"],
+      "properties": {
+        "q1_narrative": {
+          "type": "string",
+          "enum": ["data-driven", "narrative-driven", "brand-driven", "concept-driven"]
+        },
+        "q2_source": {
+          "type": "string",
+          "enum": ["user-provided", "ai-generated", "stock-curated", "abstract-replacement", "placeholder"]
+        },
+        "q3_language": {
+          "type": "object",
+          "required": ["primary"],
+          "properties": {
+            "primary": {
+              "type": "string",
+              "enum": [
+                "architectural-photography",
+                "product-still-life",
+                "editorial-portrait",
+                "abstract-texture",
+                "generative-art",
+                "3d-render",
+                "line-illustration",
+                "data-visualization"
+              ]
+            },
+            "secondary": { "type": ["string", "null"] }
+          }
+        },
+        "q4_tonal": {
+          "type": "object",
+          "required": ["method"],
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": ["bw", "duotone", "desaturate-30", "warm-wash", "cool-wash", "grain-overlay"]
+            },
+            "duotone_colors": {
+              "type": "array",
+              "items": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "grain_intensity": {
+              "type": "string",
+              "enum": ["none", "light", "medium", "heavy"]
+            }
+          }
+        },
+        "q5_ratios": {
+          "type": "object",
+          "required": ["allowed", "role_map"],
+          "properties": {
+            "allowed": {
+              "type": "array",
+              "items": { "type": "string", "pattern": "^\\d+:\\d+$" },
+              "maxItems": 3
+            },
+            "role_map": {
+              "type": "object",
+              "properties": {
+                "hero": { "type": "string" },
+                "supporting": { "type": "string" },
+                "portrait": { "type": "string" },
+                "product": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "imagery": {
+      "type": "object",
+      "required": ["coverage_percent", "prompts_or_keywords"],
+      "properties": {
+        "coverage_percent": { "type": "number", "minimum": 20, "maximum": 80 },
+        "prompts_or_keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 5,
+          "description": "Concrete, executable prompts or search keywords. Each must specify style, subject, composition, lighting, tone. Required by I14."
+        },
+        "treatment_summary": {
+          "type": "string",
+          "description": "One-sentence description of unified visual treatment applied to all imagery."
+        }
+      }
+    },
+    "per_slide_plan": {
+      "type": "array",
+      "description": "Mandatory by Step 2.5 Q6. Every slide must have an entry, even 'none' for pure-type pages.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["slide", "role", "scale", "ratio", "type_image_relation"],
+        "properties": {
+          "slide": { "type": "integer", "minimum": 1 },
+          "title": { "type": "string" },
+          "role": {
+            "type": "string",
+            "enum": ["hero", "supporting", "atmospheric", "dataviz", "none"]
+          },
+          "scale": {
+            "type": "string",
+            "enum": ["full-bleed", "ultra-small", "none"],
+            "description": "I9 binary. 'none' only if role='none'."
+          },
+          "ratio": {
+            "type": ["string", "null"],
+            "pattern": "^\\d+:\\d+$"
+          },
+          "type_image_relation": {
+            "type": "string",
+            "enum": ["separation", "integration", "none"]
+          },
+          "integration_guard": {
+            "type": ["object", "null"],
+            "description": "Required if relation='integration' (I13)",
+            "properties": {
+              "min_type_size_px": { "type": "integer", "minimum": 96 },
+              "overlay": {
+                "type": "string",
+                "enum": ["gradient-20", "gradient-40", "color-wash", "solid-block"]
+              },
+              "contrast_ratio": { "type": "number", "minimum": 7.0 }
+            }
+          },
+          "content_brief": { "type": "string" },
+          "prompt_or_source": { "type": "string" }
+        }
+      }
+    },
+    "dna_validation": {
+      "type": "array",
+      "description": "All 33 rules, all must be PASS before delivery.",
+      "minItems": 33,
+      "maxItems": 33,
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "target", "measured", "status"],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "pattern": "^(T[1-6]|C[1-5]|L[1-4]|S[1-4]|I([1-9]|1[0-4]))$"
+          },
+          "target": { "type": "string" },
+          "measured": { "type": "string" },
+          "status": { "type": "string", "enum": ["✅ PASS", "❌ FAIL"] }
+        }
+      }
+    },
+    "negative_self_checks": {
+      "type": "object",
+      "description": "5 mandatory guards against AI reverting to pure-type safety zone.",
+      "required": [
+        "concrete_prompts_produced",
+        "per_slide_plan_complete",
+        "example_specs_50pct_imagery",
+        "tonal_pipeline_unified",
+        "scale_binary_enforced"
+      ],
+      "properties": {
+        "concrete_prompts_produced": { "type": "boolean", "const": true },
+        "per_slide_plan_complete": { "type": "boolean", "const": true },
+        "example_specs_50pct_imagery": { "type": "boolean", "const": true },
+        "tonal_pipeline_unified": { "type": "boolean", "const": true },
+        "scale_binary_enforced": { "type": "boolean", "const": true }
+      }
+    },
+    "usage_guide": {
+      "type": "object",
+      "required": ["do", "avoid", "best_for"],
+      "properties": {
+        "do": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "avoid": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "best_for": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "example_slide_specs": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["title", "layout_description", "elements"],
+        "properties": {
+          "title": { "type": "string" },
+          "layout_description": { "type": "string" },
+          "elements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "component": { "type": "string" },
+                "position": { "type": "string" },
+                "content": { "type": "string" },
+                "style_tokens_referenced": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -4,79 +4,230 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>演示 - Presenta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter+Tight:wght@400;500;600&family=Noto+Sans+SC:wght@400;500&family=Noto+Serif+SC:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #000; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #11100f;
+      --surface: rgba(245, 239, 230, 0.08);
+      --line: rgba(245, 239, 230, 0.16);
+      --text: #f4efe8;
+      --muted: rgba(244, 239, 232, 0.55);
+      --accent: #b24834;
+      --font-display: 'Fraunces', 'Noto Serif SC', serif;
+      --font-body: 'Inter Tight', 'Noto Sans SC', sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top, rgba(178, 72, 52, 0.18), transparent 30%),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 120px 120px,
+        var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+    }
 
     .stage {
-      position: fixed; inset: 0;
-      display: flex; align-items: center; justify-content: center;
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
     }
+
     .slide-wrap {
-      width: 1280px; height: 720px;
-      position: relative; overflow: hidden;
+      position: relative;
+      width: 1280px;
+      height: 720px;
+      overflow: hidden;
       transform-origin: center center;
+      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.35);
     }
+
+    .slide-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -18px;
+      border: 1px solid rgba(244, 239, 232, 0.08);
+      pointer-events: none;
+    }
+
     .slide-wrap iframe {
-      width: 1280px; height: 720px; border: none;
+      width: 1280px;
+      height: 720px;
+      border: none;
+      background: #f7f2ea;
     }
 
     .controls {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      display: flex; align-items: center; justify-content: center; gap: 12px;
-      padding: 12px 24px;
-      background: linear-gradient(transparent, rgba(0,0,0,0.7));
-      opacity: 0; transition: opacity 0.3s;
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      background: rgba(17, 16, 15, 0.82);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      transition: opacity 0.25s ease;
       z-index: 10;
     }
-    .controls.visible { opacity: 1; }
-    .controls:hover { opacity: 1; }
+
+    .controls.visible,
+    .controls:hover {
+      opacity: 1;
+    }
 
     .ctrl-btn {
-      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.8); border-radius: 8px;
-      padding: 8px 12px; cursor: pointer; font-size: 13px;
-      display: flex; align-items: center; gap: 6px;
-      transition: all 0.2s;
+      min-width: 38px;
+      height: 38px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }
-    .ctrl-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
-    .ctrl-btn:disabled { opacity: 0.3; cursor: default; }
-    .ctrl-btn svg { width: 16px; height: 16px; }
+
+    .ctrl-btn:hover:not(:disabled) {
+      background: var(--surface);
+      border-color: var(--line);
+      color: var(--text);
+    }
+
+    .ctrl-btn:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .ctrl-btn svg {
+      width: 16px;
+      height: 16px;
+    }
 
     .slide-num {
-      color: rgba(255,255,255,0.5); font-size: 13px;
-      min-width: 60px; text-align: center;
-      font-variant-numeric: tabular-nums;
+      min-width: 72px;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
     }
 
     .progress {
-      position: fixed; bottom: 0; left: 0; right: 0; height: 3px;
-      background: rgba(255,255,255,0.1); z-index: 11;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      z-index: 11;
     }
+
     .progress-fill {
-      height: 100%; background: #667eea; transition: width 0.3s;
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.25s ease;
     }
 
     .start-overlay {
-      position: fixed; inset: 0; z-index: 20;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.85);
-      color: #fff; text-align: center;
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(9, 8, 8, 0.82);
+      color: var(--text);
+      text-align: center;
+      padding: 24px;
     }
-    .start-overlay.hidden { display: none; }
-    .start-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
-    .start-hint { font-size: 14px; color: rgba(255,255,255,0.4); margin-bottom: 24px; }
+
+    .start-overlay.hidden {
+      display: none;
+    }
+
+    .start-card {
+      width: min(520px, 100%);
+      padding: 36px 32px;
+      border: 1px solid var(--line);
+      background: rgba(17, 16, 15, 0.75);
+      backdrop-filter: blur(16px);
+    }
+
+    .start-kicker {
+      margin-bottom: 14px;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .start-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 0.96;
+      margin-bottom: 10px;
+    }
+
+    .start-hint {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 26px;
+    }
+
     .start-btn {
-      padding: 12px 32px; border: none; border-radius: 10px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #fff; font-size: 15px; font-weight: 600; cursor: pointer;
-      transition: transform 0.2s;
+      min-width: 172px;
+      min-height: 48px;
+      padding: 0 18px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
     }
-    .start-btn:hover { transform: translateY(-1px); }
-    .start-keys { margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.3); }
+
+    .start-btn:hover {
+      background: #953826;
+      border-color: #953826;
+    }
+
+    .start-keys {
+      margin-top: 20px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: rgba(244, 239, 232, 0.45);
+      text-transform: uppercase;
+    }
+
     .start-keys kbd {
-      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 4px; padding: 2px 6px; margin: 0 2px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      margin: 0 4px;
+      border: 1px solid var(--line);
+      background: rgba(245, 239, 230, 0.06);
+      font-family: inherit;
+      font-size: 11px;
     }
   </style>
 </head>
@@ -108,12 +259,15 @@
   <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
 
   <div class="start-overlay" id="startOverlay">
-    <div>
+    <div class="start-card">
+      <div class="start-kicker">Presentation Mode</div>
       <div class="start-title">准备开始演示</div>
-      <div class="start-hint">按空格键或点击开始</div>
+      <div class="start-hint">按空格键或点击下方按钮开始放映。界面会自动收起，只保留最轻量的控制栏。</div>
       <button class="start-btn" id="startBtn">开始演示</button>
       <div class="start-keys">
-        <kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp; <kbd>F</kbd> 全屏 &nbsp; <kbd>Esc</kbd> 退出
+        <kbd>←</kbd> <kbd>→</kbd> 翻页
+        <kbd>F</kbd> 全屏
+        <kbd>Esc</kbd> 退出
       </div>
     </div>
   </div>
@@ -123,6 +277,16 @@
     let slides = [];
     let idx = 0;
     let presenting = false;
+    let styleSettings = null;
+    let activeWrap = null;
+    const DEFAULT_STYLE_SETTINGS = {
+      fontSize: 24,
+      lineHeight: 1.6,
+      paddingX: 64,
+      density: 1.0,
+      heading: 'Noto Serif SC',
+      body: 'Noto Sans SC'
+    };
 
     function loadSlides() {
       const saved = sessionStorage.getItem('presenta-current-project') ||
@@ -131,7 +295,60 @@
       try {
         const project = JSON.parse(saved);
         slides = project?.slides || [];
+        styleSettings = project?.styleSettings || DEFAULT_STYLE_SETTINGS;
       } catch (e) {}
+    }
+
+    function quoteFontFamily(name) {
+      if (!name) return '';
+      return name
+        .split(',')
+        .map((part) => {
+          const trimmed = part.trim().replace(/^['"]|['"]$/g, '');
+          if (!trimmed) return '';
+          return /[\s\u4e00-\u9fff-]/.test(trimmed) ? '\'' + trimmed + '\'' : trimmed;
+        })
+        .filter(Boolean)
+        .join(', ');
+    }
+
+    function setScaledLengthProperty(root, variableName, value) {
+      root.style.setProperty(variableName + '-base', value);
+      root.style.setProperty(variableName, 'calc(var(' + variableName + '-base) * var(--content-fit, 1))');
+    }
+
+    function injectStyleSettings(rawHtml) {
+      if (!rawHtml) return '';
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(rawHtml, 'text/html');
+      const settings = Object.assign({}, DEFAULT_STYLE_SETTINGS, styleSettings || {});
+      const root = doc.documentElement;
+
+      root.style.setProperty('--content-fit', '1');
+      setScaledLengthProperty(root, '--font-size-base', settings.fontSize + 'px');
+      setScaledLengthProperty(root, '--font-size-h1', Math.round(settings.fontSize * 3.3) + 'px');
+      setScaledLengthProperty(root, '--font-size-h2', Math.round(settings.fontSize * 2.3) + 'px');
+      setScaledLengthProperty(root, '--font-size-h3', Math.round(settings.fontSize * 1.5) + 'px');
+      setScaledLengthProperty(root, '--font-size-h4', Math.round(settings.fontSize * 1.3) + 'px');
+      setScaledLengthProperty(root, '--font-size-body', Math.round(settings.fontSize * 0.75) + 'px');
+      setScaledLengthProperty(root, '--font-size-small', Math.round(settings.fontSize * 0.67) + 'px');
+      setScaledLengthProperty(root, '--font-size-xs', Math.round(settings.fontSize * 0.58) + 'px');
+      setScaledLengthProperty(root, '--font-size-hero', Math.round(settings.fontSize * 6.7) + 'px');
+      setScaledLengthProperty(root, '--font-size-stat', Math.round(settings.fontSize * 2) + 'px');
+      root.style.setProperty('--line-height', settings.lineHeight);
+      root.style.setProperty('--line-height-tight', Math.max(1.0, settings.lineHeight - 0.4));
+      root.style.setProperty('--line-height-loose', Math.min(2.0, settings.lineHeight + 0.2));
+      setScaledLengthProperty(root, '--slide-padding-x', settings.paddingX + 'px');
+      setScaledLengthProperty(root, '--slide-padding-y', Math.round(settings.paddingX * 0.75) + 'px');
+      root.style.setProperty('--slide-density', settings.density);
+      setScaledLengthProperty(root, '--slide-gap', Math.round(48 * settings.density) + 'px');
+      setScaledLengthProperty(root, '--slide-element-gap', Math.round(16 * settings.density) + 'px');
+      root.style.setProperty('--font-heading', quoteFontFamily(settings.heading));
+      root.style.setProperty('--font-cn', quoteFontFamily(settings.body));
+      root.style.setProperty('--font-en', quoteFontFamily(settings.body));
+
+      return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
     }
 
     function render() {
@@ -145,11 +362,11 @@
         wrap.className = 'slide-wrap';
         const iframe = document.createElement('iframe');
         iframe.sandbox = 'allow-same-origin allow-scripts';
-        iframe.srcdoc = slide.html;
+        iframe.srcdoc = injectStyleSettings(slide.html);
         wrap.appendChild(iframe);
         stage.appendChild(wrap);
+        activeWrap = wrap;
         fitSlide(wrap);
-        window.addEventListener('resize', () => fitSlide(wrap));
       }
 
       document.getElementById('slideNum').textContent = (idx + 1) + ' / ' + slides.length;
@@ -159,10 +376,15 @@
     }
 
     function fitSlide(wrap) {
-      const sw = window.innerWidth, sh = window.innerHeight;
+      const sw = window.innerWidth - 96;
+      const sh = window.innerHeight - 96;
       const scale = Math.min(sw / 1280, sh / 720);
       wrap.style.transform = 'scale(' + scale + ')';
     }
+
+    window.addEventListener('resize', () => {
+      if (activeWrap) fitSlide(activeWrap);
+    });
 
     function next() { if (idx < slides.length - 1) { idx++; render(); } }
     function prev() { if (idx > 0) { idx--; render(); } }
@@ -171,7 +393,9 @@
       presenting = true;
       document.getElementById('startOverlay').classList.add('hidden');
       document.getElementById('controls').classList.add('visible');
-      setTimeout(() => { if (presenting) document.getElementById('controls').classList.remove('visible'); }, 3000);
+      setTimeout(() => {
+        if (presenting) document.getElementById('controls').classList.remove('visible');
+      }, 2600);
     }
 
     function exit() {
@@ -198,21 +422,24 @@
     document.addEventListener('mousemove', (e) => {
       if (!presenting) return;
       const c = document.getElementById('controls');
-      if (e.clientY > window.innerHeight - 100) c.classList.add('visible');
+      if (e.clientY > window.innerHeight - 120) c.classList.add('visible');
       else c.classList.remove('visible');
     });
 
     document.addEventListener('keydown', (e) => {
       if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (!presenting) start(); else next(); }
-      else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); next(); }
-      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
       else if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFullscreen(); }
       else if (e.key === 'Escape') { e.preventDefault(); exit(); }
     });
 
     loadSlides();
     if (slides.length) render();
-    else document.getElementById('startOverlay').innerHTML = '<div><div class="start-title">没有幻灯片</div><div class="start-hint"><a href="editor.html" style="color:#667eea">返回编辑器</a></div></div>';
+    else {
+      document.getElementById('startOverlay').innerHTML =
+        '<div class="start-card"><div class="start-kicker">Presentation Mode</div><div class="start-title">没有幻灯片</div><div class="start-hint"><a href="editor.html" style="color:#f4efe8;text-decoration:none;border-bottom:1px solid rgba(244,239,232,0.4);padding-bottom:2px">返回编辑器</a></div></div>';
+    }
   })();
   </script>
 </body>

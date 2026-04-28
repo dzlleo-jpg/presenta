@@ -6,31 +6,29 @@
   <title>编辑幻灯片 - Presenta</title>
   <link rel="stylesheet" href="../styles/base.css?v=202604221000">
   <link rel="stylesheet" href="../styles/editor.css">
+  <link rel="stylesheet" href="../styles/buttons.css">
+  <link rel="stylesheet" href="../styles/modal.css">
   <script src="../scripts/data/models.js" defer></script>
 </head>
-<body class="bg-gradient-mesh">
-  <!-- Background Effects -->
-  <div class="bg-effects">
-    <div class="gradient-orb gradient-orb-1"></div>
-    <div class="gradient-orb gradient-orb-2"></div>
-  </div>
-
-  <!-- Header -->
+<body>
   <header class="header">
     <div class="header-inner">
       <a href="wizard.html" class="logo">
         <div class="logo-icon">
           <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-            <rect x="2" y="2" width="24" height="24" rx="6" stroke="currentColor" stroke-width="2"/>
-            <path d="M8 14L12 18L20 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="2" y="2" width="24" height="24" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M8 14L12 18L20 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <span class="logo-text">Presenta</span>
+        <div class="logo-copy">
+          <span class="logo-text">Presenta</span>
+          <span class="logo-meta">Editor Workspace</span>
+        </div>
       </a>
 
       <div class="header-center">
         <div class="slide-nav">
-          <button class="slide-nav-btn" id="prevSlideBtn">
+          <button class="slide-nav-btn" id="prevSlideBtn" title="上一页">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="15 18 9 12 15 6"/>
             </svg>
@@ -38,7 +36,7 @@
           <span class="slide-counter">
             <span id="currentSlideNum">1</span> / <span id="totalSlideNum">1</span>
           </span>
-          <button class="slide-nav-btn" id="nextSlideBtn">
+          <button class="slide-nav-btn" id="nextSlideBtn" title="下一页">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="9 18 15 12 9 6"/>
             </svg>
@@ -58,24 +56,22 @@
     </div>
   </header>
 
-  <!-- Main Content -->
   <main class="main-content">
-    <!-- Left Panel: Slide Thumbnails (导航用，不可增删) -->
     <aside class="panel panel-left">
       <div class="panel-header">
+        <span class="panel-label">Sequence</span>
         <h2 class="panel-title">幻灯片</h2>
       </div>
-      <div class="slide-list" id="slideList">
-        <!-- Thumbnails rendered by editor.js -->
-      </div>
+      <div class="slide-list" id="slideList"></div>
     </aside>
 
-    <!-- Center Panel: Canvas -->
-    <div class="panel panel-center">
+    <section class="panel panel-center">
       <div class="canvas-container">
-        <div class="canvas" id="slideCanvas">
-          <!-- Slide HTML injected here -->
+        <div class="canvas-meta">
+          <span>Current Draft</span>
+          <span>Swiss Editorial Workspace</span>
         </div>
+        <div class="canvas" id="slideCanvas"></div>
         <div class="canvas-controls">
           <button class="canvas-zoom-btn" id="zoomOutBtn" title="缩小">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -100,22 +96,18 @@
           </button>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Right Panel: Global Style Controls -->
     <aside class="panel panel-right">
-      <!-- Tab Navigation -->
       <div class="panel-tabs">
-        <button class="panel-tab active" data-tab="style">🎨 风格</button>
-        <button class="panel-tab" data-tab="content">📷 图片</button>
+        <button class="panel-tab active" data-tab="style">风格</button>
+        <button class="panel-tab" data-tab="content">图片</button>
       </div>
 
-      <!-- 风格 Tab: 全局 CSS 变量滑块 -->
       <div class="tab-content active" id="styleTab">
-        <!-- 文字区块 -->
         <div class="style-section">
           <div class="section-header">
-            <span class="section-icon">🔤</span>
+            <span class="section-icon">Aa</span>
             <span class="section-title">文字</span>
           </div>
 
@@ -124,8 +116,7 @@
               <span class="slider-label">字体大小</span>
               <span class="slider-value" id="fontSizeVal">24px</span>
             </div>
-            <input type="range" class="style-slider" id="fontSizeSlider"
-              min="16" max="40" value="24" step="1">
+            <input type="range" class="style-slider" id="fontSizeSlider" min="16" max="40" value="24" step="1">
           </div>
 
           <div class="slider-group">
@@ -133,15 +124,13 @@
               <span class="slider-label">行间距</span>
               <span class="slider-value" id="lineHeightVal">1.6</span>
             </div>
-            <input type="range" class="style-slider" id="lineHeightSlider"
-              min="1.2" max="2.0" value="1.6" step="0.1">
+            <input type="range" class="style-slider" id="lineHeightSlider" min="1.2" max="2.0" value="1.6" step="0.1">
           </div>
         </div>
 
-        <!-- 间距区块 -->
         <div class="style-section">
           <div class="section-header">
-            <span class="section-icon">📐</span>
+            <span class="section-icon">Gr</span>
             <span class="section-title">间距</span>
           </div>
 
@@ -150,8 +139,7 @@
               <span class="slider-label">边距</span>
               <span class="slider-value" id="paddingXVal">64px</span>
             </div>
-            <input type="range" class="style-slider" id="paddingXSlider"
-              min="40" max="120" value="64" step="5">
+            <input type="range" class="style-slider" id="paddingXSlider" min="40" max="120" value="64" step="5">
           </div>
 
           <div class="slider-group">
@@ -159,48 +147,44 @@
               <span class="slider-label">密度</span>
               <span class="slider-value" id="densityVal">标准</span>
             </div>
-            <input type="range" class="style-slider" id="densitySlider"
-              min="0.7" max="1.3" value="1.0" step="0.1">
+            <input type="range" class="style-slider" id="densitySlider" min="0.7" max="1.3" value="1.0" step="0.1">
           </div>
         </div>
 
-        <!-- 字体组合 -->
         <div class="style-section">
           <div class="section-header">
-            <span class="section-icon">🔤</span>
+            <span class="section-icon">Tp</span>
             <span class="section-title">字体组合</span>
           </div>
           <div class="font-presets" id="fontPresets">
+            <button class="font-preset" data-heading="Fraunces" data-body="Inter Tight">
+              <span class="preset-name">Swiss Serif</span>
+              <span class="preset-desc">Fraunces + Inter Tight</span>
+            </button>
             <button class="font-preset active" data-heading="Noto Serif SC" data-body="Noto Sans SC">
-              <span class="preset-name">专业感</span>
-              <span class="preset-desc">思源宋体 + 黑体</span>
+              <span class="preset-name">中文叙事</span>
+              <span class="preset-desc">思源宋体 + 思源黑体</span>
             </button>
-            <button class="font-preset" data-heading="Inter" data-body="Inter">
-              <span class="preset-name">现代感</span>
-              <span class="preset-desc">Inter</span>
+            <button class="font-preset" data-heading="Inter Tight" data-body="Inter Tight">
+              <span class="preset-name">Modern Sans</span>
+              <span class="preset-desc">Inter Tight</span>
             </button>
-            <button class="font-preset" data-heading="楷体" data-body="Noto Sans SC">
-              <span class="preset-name">温暖感</span>
-              <span class="preset-desc">楷体 + 黑体</span>
-            </button>
-            <button class="font-preset" data-heading="sans-serif" data-body="sans-serif">
-              <span class="preset-name">极简感</span>
-              <span class="preset-desc">无衬线</span>
+            <button class="font-preset" data-heading="Fraunces" data-body="Noto Sans SC">
+              <span class="preset-name">Hybrid</span>
+              <span class="preset-desc">Fraunces + Noto Sans SC</span>
             </button>
           </div>
         </div>
 
-        <!-- 实时预览提示 -->
         <div class="style-hint">
-          💡 调整立即生效，刷新后自动保存
+          调整会立即作用在当前草稿上，并自动保存到本地。
         </div>
       </div>
 
-      <!-- 图片 Tab -->
       <div class="tab-content" id="contentTab">
         <div class="style-section">
           <div class="section-header">
-            <span class="section-icon">📷</span>
+            <span class="section-icon">Im</span>
             <span class="section-title">当前页图片</span>
           </div>
           <div class="page-image-list" id="pageImageList">
@@ -210,23 +194,19 @@
 
         <div class="style-section">
           <div class="section-header">
-            <span class="section-icon">📋</span>
+            <span class="section-icon">Lb</span>
             <span class="section-title">全部图片一览</span>
           </div>
-          <div class="all-image-grid" id="allImageGrid">
-            <!-- 全部幻灯片的图片缩略图 -->
-          </div>
+          <div class="all-image-grid" id="allImageGrid"></div>
         </div>
 
-        <!-- 提示 -->
         <div class="style-hint">
-          💡 点击画布上的图片也可操作
+          点击画布中的图片，或在这里快速切换和替换素材。
         </div>
       </div>
     </aside>
   </main>
 
-  <!-- Image Popup (点击图片时弹出) -->
   <div class="image-popup" id="imagePopup" style="display:none;">
     <div class="popup-arrow"></div>
     <button class="popup-item" data-action="replace">

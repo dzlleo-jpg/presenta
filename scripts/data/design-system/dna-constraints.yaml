@@ -1,0 +1,288 @@
+# ============================================
+# Aesthetic Design System — DNA Constraints
+# Version: 1.2.0
+# Total rules: 33 (T6 + C5 + L4 + S4 + I14)
+# All rules are "blocker" unless marked "warning"
+# ============================================
+
+version: 1.2.0
+total_rules: 33
+
+philosophy: |
+  Layer A (absolute values) is freely tunable.
+  Layer B (these relative values) is the DNA — never violate.
+  A design can pass all 33 rules and automatically feel premium,
+  regardless of its specific color/font choices.
+
+# ============================================
+# T — TYPOGRAPHY (6 rules)
+# ============================================
+typography:
+  - id: T1
+    name: Hierarchy levels
+    rule: "type_hierarchy_levels <= 3"
+    severity: blocker
+    rationale: "More than 3 levels creates visual noise and breaks editorial rhythm."
+    measurement: "Count distinct text styles (heading/body/label). Exclude data-viz labels."
+
+  - id: T2
+    name: Heading-to-body ratio
+    rule: "heading_size_px / body_size_px >= 2.5"
+    rule_editorial: "heading_size_px / body_size_px >= 3.5"
+    severity: blocker
+    rationale: "Weak H:B contrast reads as amateur/template-cheap."
+    measurement: "Divide primary heading size by primary body size."
+
+  - id: T3
+    name: Data hierarchy
+    rule: "number_size / unit_size >= 3 AND number_size / caption_size >= 4"
+    severity: blocker
+    applies_when: "slide_contains_data == true"
+    rationale: "Data is the hero. Equal-size numbers and labels flatten importance."
+
+  - id: T4
+    name: Weight contrast
+    rule: "max(font_weights_used) - min(font_weights_used) >= 400"
+    severity: blocker
+    rationale: "500 vs 600 weight differences are invisible. Use 400 vs 800 for clear rhythm."
+    allowed_pairs: ["300↔700", "400↔800", "300↔900"]
+
+  - id: T5
+    name: Body line-height
+    rule: "1.3 <= body_line_height_ratio <= 1.7"
+    preferred: "1.4 to 1.6"
+    severity: blocker
+    rationale: "Below 1.3 cramped; above 1.7 loose. 1.5 is the editorial sweet spot."
+
+  - id: T6
+    name: Letter-spacing discipline
+    rule: "display_letter_spacing between -0.03 and -0.01 AND uppercase_label_tracking between 0.04 and 0.08"
+    severity: warning
+    rationale: "Large type needs tightening; small uppercase needs loosening."
+
+# ============================================
+# C — COLOR (5 rules)
+# ============================================
+color:
+  - id: C1
+    name: Neutral dominance
+    rule: "neutral_coverage >= 0.70 AND accent_coverage <= 0.15 AND support_coverage <= 0.15"
+    severity: blocker
+    rationale: "Color hierarchy: neutral dominates, accent punctuates."
+    measurement: "Estimate % of canvas area per color class across average slide."
+
+  - id: C2
+    name: Accent restraint
+    rule: "accent_count <= 1 OR (accent_count <= 3 AND all_same_temperature == true)"
+    severity: blocker
+    rationale: "Multiple accents at equal weight = no accent."
+
+  - id: C3
+    name: Saturation area limit
+    rule: "area_of(saturation > 0.70) <= 0.20 * canvas_area"
+    severity: blocker
+    rationale: "Saturated color fatigues the eye above 20% coverage."
+
+  - id: C4
+    name: Temperature coherence
+    rule: "hue_spread_degrees <= 60 OR max_saturation < 0.30"
+    severity: blocker
+    rationale: "Mixed temperatures unless everything is desaturated."
+
+  - id: C5
+    name: Body text contrast
+    rule: "body_text_contrast_ratio >= 7.0"
+    severity: blocker
+    rationale: "AAA accessibility + visual confidence."
+
+# ============================================
+# L — LAYOUT (4 rules)
+# ============================================
+layout:
+  - id: L1
+    name: Single focal point
+    rule: "focal_points_per_page == 1"
+    severity: blocker
+    priority: highest
+    rationale: "THE most important rule. Multiple focal points = no focal point."
+
+  - id: L2
+    name: Whitespace minimum
+    rule_creative: "whitespace_ratio >= 0.40"
+    rule_classical: "whitespace_ratio >= 0.50"
+    severity: blocker
+    rationale: "Whitespace is not empty. It frames the content."
+
+  - id: L3
+    name: Baseline grid
+    rule: "all_elements_snap_to_baseline_grid AND baseline_unit in [4, 8]"
+    severity: blocker
+    rationale: "Sub-pixel misalignment is the #1 tell of amateur work."
+
+  - id: L4
+    name: Decoration restraint
+    rule: "decoration_element_count <= information_element_count * 0.3"
+    severity: blocker
+    rationale: "Decoration serves information, never competes with it."
+
+# ============================================
+# S — STYLE COHERENCE (4 rules)
+# ============================================
+style:
+  - id: S1
+    name: Visual language singularity
+    rule: "primary_visual_languages == 1 AND secondary_visual_languages <= 1"
+    severity: blocker
+    rationale: "Mixing photo + illustration + 3D + icons = brand chaos."
+    allowed_languages: [photography, illustration, 3d, iconography, typography-only]
+
+  - id: S2
+    name: Border-radius consistency
+    rule: "distinct_border_radius_values <= 2"
+    severity: blocker
+    rationale: "4/8/12/16/24px radii mixed = template-generator aesthetic."
+
+  - id: S3
+    name: Shadow discipline
+    rule: "distinct_shadow_styles <= 1"
+    preferred: "0"
+    severity: blocker
+    rationale: "Multiple shadow styles fracture surface hierarchy."
+
+  - id: S4
+    name: Icon consistency
+    rule: "single(stroke_width) AND single(corner_style) AND single(metaphor_family)"
+    severity: blocker
+    rationale: "Icon inconsistency is brand-kit failure."
+
+# ============================================
+# I — IMAGERY (14 rules, v1.2 core)
+# ============================================
+imagery:
+  # I-A Narrative weight
+  - id: I1
+    name: Imagery page coverage
+    rule: "pages_with_imagery / total_pages >= 0.30"
+    severity: blocker
+    exempt_if: "deck_type == 'data-heavy' AND declared_exempt == true"
+    rationale: "AI outputs without image discipline default to pure-type safety zone."
+
+  - id: I2
+    name: Role tagging
+    rule: "every_image.role in ['hero', 'supporting', 'atmospheric', 'dataviz']"
+    severity: blocker
+    rationale: "Untagged images drift into decorative purposelessness."
+
+  - id: I3
+    name: Visual language singularity (imagery subset)
+    rule: "primary_imagery_language.count == 1 AND secondary_imagery_language.count <= 1"
+    severity: blocker
+    rationale: "Echo of S1 but applied to image sources specifically."
+
+  # I-B Tonal discipline
+  - id: I4
+    name: Single tonal pipeline
+    rule: "all_images_share(tonal_treatment)"
+    severity: blocker
+    allowed_treatments: [bw, duotone, desaturate-30, warm-wash, cool-wash, grain-overlay]
+    rationale: "Unified tone is what makes multiple images feel like ONE magazine."
+
+  - id: I5
+    name: Saturation variation
+    rule: "max(image.saturation) - min(image.saturation) <= 0.20"
+    severity: blocker
+
+  - id: I6
+    name: Color-temperature variation
+    rule: "max(image.color_temp_K) - min(image.color_temp_K) <= 500"
+    severity: blocker
+
+  # I-C Composition
+  - id: I7
+    name: Subject breathing room
+    rule: "negative_space_around_subject >= 0.15 * image.short_side"
+    severity: blocker
+    exempt_if: "image.type == 'full-frame-texture'"
+
+  - id: I8
+    name: Single subject
+    rule: "distinct_subjects_per_image <= 1"
+    severity: blocker
+    note: "Environment/context does not count as subject."
+
+  # I-D Scale discipline (MOST CRITICAL)
+  - id: I9
+    name: Binary image scale
+    rule: "image.coverage_ratio >= 0.85 OR image.coverage_ratio <= 0.12"
+    severity: blocker
+    priority: highest_imagery_rule
+    rationale: |
+      THE premium-vs-cheap boundary. The 12%-40% middle zone creates
+      "postage stamp" feel. Force binary: full-bleed OR ultra-small.
+
+  - id: I10
+    name: Role-based coverage
+    rules:
+      hero: "coverage >= 0.40"
+      supporting: "coverage <= 0.25"
+      atmospheric: "coverage == full-bleed"
+    severity: blocker
+
+  # I-E Aspect ratio
+  - id: I11
+    name: Aspect ratio variants cap
+    rule: "distinct_aspect_ratios_in_deck <= 3"
+    severity: blocker
+
+  - id: I12
+    name: Role-ratio binding
+    rule: "same_role => same_ratio"
+    severity: blocker
+    rationale: "Consistency within a role is the rhythm of the deck."
+
+  # I-F Type-image relation
+  - id: I13
+    name: Binary type-image relation
+    rule: |
+      relation == 'separation' (no overlap)
+      OR
+      relation == 'integration' (type_size >= 96px AND overlay_present AND contrast_ratio >= 7)
+    severity: blocker
+    rationale: "Small text over image is the most common template-cheap mistake."
+
+  # I-G Source strategy
+  - id: I14
+    name: Explicit source strategy
+    rule: "source_strategy in ['user-provided', 'ai-generated', 'stock-curated', 'abstract-replacement', 'placeholder']"
+    severity: blocker
+    additional_requirement: |
+      If source == 'ai-generated': provide >= 5 concrete prompts with style, subject, composition, lighting, tone.
+      If source == 'stock-curated': provide >= 5 specific search keywords.
+      If source == 'placeholder': visible grey frame with role/ratio/brief annotation.
+    rationale: "Silent 'add image later' is the #1 reason AI outputs revert to pure-type."
+
+# ============================================
+# NEGATIVE SELF-CHECKS (run before delivery)
+# ============================================
+negative_self_checks:
+  - "Did I produce concrete image prompts or keywords, not 'add image here'?"
+  - "Does per-slide plan cover EVERY page with role + scale + ratio?"
+  - "Do ≥50% of example slide specs explicitly include imagery?"
+  - "Do all images share the same tonal pipeline (I4)?"
+  - "Are all image sizes either full-bleed or ≤12%, with zero middle-zone (I9)?"
+
+# ============================================
+# VALIDATION OUTPUT FORMAT
+# ============================================
+validation_output:
+  format: "markdown_table"
+  required_columns: [rule_id, target, measured, status]
+  status_values: ["✅ PASS", "❌ FAIL"]
+  delivery_gate: "All 33 must PASS. Any FAIL → regenerate failing portion, re-validate."
+
+# ============================================
+# SEVERITY LEGEND
+# ============================================
+severity_legend:
+  blocker: "Must pass. Failing = regenerate."
+  warning: "Should pass. Failing = flag in output but may ship."

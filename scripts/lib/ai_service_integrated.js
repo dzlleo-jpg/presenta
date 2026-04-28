@@ -58,10 +58,14 @@ const AIServiceIntegrated = {
     const { onProgress, onPlanningComplete, onSlideRender, onComplete, onError } = callbacks;
     let simInterval = null;
 
+    // combo 路由：从 wizardAnswers 读取 combo 名
+    this._currentCombo = wizardAnswers?.combo || 'classic';
+
     try {
       console.log('[AIService] ===== generate() 开始 =====');
       console.log('[AIService] documentContent length:', documentContent?.length);
       console.log('[AIService] wizardAnswers:', JSON.stringify(wizardAnswers));
+      console.log('[AIService] combo:', this._currentCombo);
       console.log('[AIService] this.provider:', this.provider, '| this.apiKey:', !!this.apiKey);
       // ========== 第一阶段：Planner ==========
       if (onProgress) {
@@ -157,10 +161,16 @@ const AIServiceIntegrated = {
       throw new Error('未知的 AI 提供商: ' + this.provider);
     }
 
+    // combo 路由：获取 planner prompt override（支持函数或字符串）
+    const combo = window.PresentaCombos?.get(this._currentCombo);
+    const plannerRaw = combo?.planner;
+    const promptOverride = typeof plannerRaw === 'function' ? plannerRaw() : (plannerRaw || null);
+
     const plannerOptions = {
       apiKey: this.apiKey,
       onProgress: options.onProgress,
-      onComplete: (result) => result.planningYaml
+      onComplete: (result) => result.planningYaml,
+      promptOverride: promptOverride
     };
 
     // OpenAI/SiliconFlow 需要 signal 支持取消
@@ -176,7 +186,9 @@ const AIServiceIntegrated = {
   // 第二阶段：Renderer（YAML → HTML）
   // ============================================
   async runRenderer(planningYaml, options = {}) {
-    const renderer = new RendererSkill();
+    // combo 路由：从 combo 获取 renderer，fallback 到 classic RendererSkill
+    const combo = window.PresentaCombos?.get(this._currentCombo);
+    const renderer = (combo?.getRenderer ? combo.getRenderer() : null) || new RendererSkill();
 
     return await renderer.renderSlides(planningYaml, {
       onProgress: options.onProgress,
